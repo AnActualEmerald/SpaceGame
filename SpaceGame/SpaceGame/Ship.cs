@@ -9,13 +9,14 @@
 using System;
 using System.Collections.Generic;
 using FileManager;
+using Game;
 
 namespace ShipBuild
 {
 	/// <summary>
 	/// Description of Ship.
 	/// </summary>
-	public class Ship
+	public class Ship : GameObject
 	{
 		DataFile shipFile;
 		List<TileData> tiles = new List<TileData>();

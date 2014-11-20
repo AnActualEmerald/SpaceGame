@@ -7,16 +7,15 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using Game;
 
 namespace ShipBuild
 {
 	/// <summary>
 	/// Description of TileBasic.
 	/// </summary>
-	public class TileBasic
+	public class TileBasic : Component
 	{
-		
-		private static List<TileBasic>
 		
 		protected String _name;
 		protected int _data;
