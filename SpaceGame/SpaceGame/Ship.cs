@@ -29,8 +29,20 @@ namespace ShipBuild
 			if(shipFile.ReadFile(out s))
 				shipFile.Parse(s, out tiles);
 			else
-				shipFile.SaveTileData(new TileData(), false);
-				
+				shipFile.SaveTileData(new TileData(), false);		
+		}
+		
+		public static Component[] buildShip(List<TileData> tiles)
+		{
+			List<Component> cc = new List<Component>();
+			
+			foreach(TileData td in tiles)
+			{
+				if(td.GetProperty("name") == "s_thruster")
+					throw new NotImplementedException();
+			}
+			
+			return cc.ToArray();
 		}
 	}
 }

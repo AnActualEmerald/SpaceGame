@@ -19,7 +19,6 @@ namespace ShipBuild
 		
 		protected String _name;
 		protected int _data;
-		protected bool enable_physics = true;
 		
 		public TileBasic(String name)
 		{
