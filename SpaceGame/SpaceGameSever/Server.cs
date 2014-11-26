@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using ServerParts;
 
 namespace SpaceGameSever
 {
@@ -17,7 +18,7 @@ namespace SpaceGameSever
 	/// </summary>
 	public class Server
 	{
-		private List<Socket> clients = new List<Socket>();
+		private List<Client> clients = new List<Client>();
 		
 		public Server()
 		{
