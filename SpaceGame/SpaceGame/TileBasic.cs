@@ -16,7 +16,9 @@ namespace ShipBuild
 	/// </summary>
 	public class TileBasic : Component
 	{
-		
+
+		public static SmallThrustTile smallThrust = new SmallThrustTile ("s_thrust");
+
 		protected String _name;
 		protected int _data;
 		
@@ -36,24 +38,20 @@ namespace ShipBuild
 			set { _name = value; }
 		}
 		
-		public virtual void Render()
+		public override void Render()
 		{
 			
 		}
 		
-		public virtual void Tick()
+		public override void Update()
 		{
 			
 		}
 		
-		public virtual void Input()
+		public override void Input()
 		{
 			
 		}
-		
-		public static TileBasic GetTileByName()
-		{
-			
-		}
+
 	}
 }

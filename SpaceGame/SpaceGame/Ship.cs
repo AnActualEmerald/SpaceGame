@@ -18,18 +18,20 @@ namespace ShipBuild
 	/// </summary>
 	public class Ship : GameObject
 	{
-		DataFile shipFile;
-		List<TileData> tiles = new List<TileData>();
+		private DataFile shipFile;
+		private List<TileData> tiles = new List<TileData>();
+		private SpaceWorld world;
 		
-		
-		public Ship(String name)
+		public Ship(String name, SpaceWorld world)
 		{
-			shipFile = new DataFile("./ships/" + path + ".shp");		
+			shipFile = new DataFile("./ships/" + name + ".shp");		
 			String s;
 			if(shipFile.ReadFile(out s))
 				shipFile.Parse(s, out tiles);
 			else
-				shipFile.SaveTileData(new TileData(), false);		
+				shipFile.SaveTileData(new TileData(), false);	
+
+			this.world = world;
 		}
 		
 		public static Component[] buildShip(List<TileData> tiles)
@@ -38,11 +40,13 @@ namespace ShipBuild
 			
 			foreach(TileData td in tiles)
 			{
-				if(td.GetProperty("name") == "s_thruster")
-					throw new NotImplementedException();
+				if(td.GetProperty("name").Equals("s_thruster"))
+					cc.Add(TileBasic.smallThrust);
 			}
-			
+
 			return cc.ToArray();
 		}
+
+
 	}
 }

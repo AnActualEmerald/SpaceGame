@@ -8,20 +8,28 @@
  */
 using System;
 using FarseerPhysics.Dynamics;
+using Microsoft.Xna.Framework;
 
 namespace Game
 {
 	/// <summary>
 	/// Description of PhysicsBody.
 	/// </summary>
-	public class PhysicsBody : Body, Component
+	public class PhysicsBody : Component
 	{
+		private Body _body;
+
 		public PhysicsBody(World world, Vector2? position = null, float rotation = 0, object userdata = null, GameObject parent = null) 
-			: base(world, position, rotation, userdata)
 		{
 			this.parent = parent;
+			_body = new Body (world, position, rotation, userdata);
 		}
-		
+
+		public virtual Body body{
+			get {return _body;}
+			set {_body = value;}
+		}
+
 		public override void Input()
 		{
 			

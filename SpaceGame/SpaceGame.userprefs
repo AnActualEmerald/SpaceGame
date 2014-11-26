@@ -1,6 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="SpaceGame\TileBasic.cs">
+    <Files>
+      <File FileName="SpaceGame\Ship.cs" Line="3" Column="3" />
+      <File FileName="SpaceGame\Class1.cs" Line="2" Column="2" />
+      <File FileName="SpaceGame\PhysicsBody.cs" Line="32" Column="32" />
+      <File FileName="SpaceGame\TileBasic.cs" Line="3" Column="3" />
+      <File FileName="SpaceGame\SpaceWorld.cs" Line="3" Column="3" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

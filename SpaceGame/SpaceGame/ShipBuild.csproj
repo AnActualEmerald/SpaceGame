@@ -46,6 +46,8 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
@@ -182,32 +184,19 @@
     <Compile Include="SmallThrustTile.cs" />
     <Compile Include="TileBasic.cs" />
     <Compile Include="TileData.cs" />
+    <Compile Include="SpaceWorld.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="FarseerPhys" />
-    <Folder Include="FarseerPhys\Collision" />
-    <Folder Include="FarseerPhys\Collision\Shapes" />
-    <Folder Include="FarseerPhys\Common" />
-    <Folder Include="FarseerPhys\Common\ConvexHull" />
-    <Folder Include="FarseerPhys\Common\Decomposition" />
-    <Folder Include="FarseerPhys\Common\Decomposition\CDT" />
-    <Folder Include="FarseerPhys\Common\Decomposition\CDT\Delaunay" />
-    <Folder Include="FarseerPhys\Common\Decomposition\CDT\Delaunay\Sweep" />
-    <Folder Include="FarseerPhys\Common\Decomposition\CDT\Polygon" />
-    <Folder Include="FarseerPhys\Common\Decomposition\CDT\Sets" />
-    <Folder Include="FarseerPhys\Common\Decomposition\CDT\Util" />
-    <Folder Include="FarseerPhys\Common\Decomposition\Seidel" />
-    <Folder Include="FarseerPhys\Common\PhysicsLogic" />
-    <Folder Include="FarseerPhys\Common\PolygonManipulation" />
-    <Folder Include="FarseerPhys\Common\TextureTools" />
-    <Folder Include="FarseerPhys\Controllers" />
-    <Folder Include="FarseerPhys\Dynamics" />
-    <Folder Include="FarseerPhys\Dynamics\Contacts" />
-    <Folder Include="FarseerPhys\Dynamics\Joints" />
-    <Folder Include="FarseerPhys\Factories" />
+    <Folder Include="FarseerPhys\" />
+    <Folder Include="FarseerPhys\Collision\" />
+    <Folder Include="FarseerPhys\Common\" />
+    <Folder Include="FarseerPhys\Common\Decomposition\" />
+    <Folder Include="FarseerPhys\Common\Decomposition\CDT\" />
+    <Folder Include="FarseerPhys\Common\Decomposition\CDT\Delaunay\" />
+    <Folder Include="FarseerPhys\Dynamics\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

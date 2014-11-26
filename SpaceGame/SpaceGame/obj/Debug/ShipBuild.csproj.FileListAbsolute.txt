@@ -1,1 +1,10 @@
 C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.csprojResolveAssemblyReference.cache
+C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.csprojResolveAssemblyReference.cache
+C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuild.exe.config
+C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuild.exe
+C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuild.pdb
+C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\OpenTK.dll
+C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\OpenTK.pdb
+C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\OpenTK.xml
+C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.exe
+C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.pdb
