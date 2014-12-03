@@ -1,1 +1,6 @@
 C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\obj\Debug\SpaceGameSever.csprojResolveAssemblyReference.cache
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\SpaceGameSever.exe.config
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\SpaceGameSever.exe
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\SpaceGameSever.pdb
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\obj\Debug\SpaceGameSever.exe
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\obj\Debug\SpaceGameSever.pdb

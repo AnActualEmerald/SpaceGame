@@ -10,6 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net.Sockets;
+using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Common;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Factories;
+using Microsoft.Xna.Framework;
 
 namespace ServerParts
 {
@@ -19,12 +24,14 @@ namespace ServerParts
 	public class Client
 	{
 		private Socket _socket;
-		private Point ship_pos;
+		private S_Point ship_pos;
 		private float ship_rot;
 		private Bitmap ship_texture;
 		private String name;
+		private Shape ship_body;
+		private S_Point[] ship_verts;
 		
-		public Client(Socket socket, String name = null, Point ship_pos = null, float ship_rot = 0, Bitmap ship_tex = null)
+		public Client(Socket socket, String name = null, S_Point ship_pos = null, float ship_rot = 0, Bitmap ship_tex = null)
 		{
 			_socket = socket;
 			Ship_pos = ship_pos;
@@ -32,6 +39,16 @@ namespace ServerParts
 			Ship_texture = ship_tex;
 			this.name = name;
 			
+			Vector2[] v = new Vector2[ship_verts.Length];
+			for(int i = 0; i < v.Length; i++)
+			{
+				v[i] = ship_verts[1].AsXNAVector();
+			}
+			
+			Vertices vs = new Vertices(v);
+			
+			ship_body = new PolygonShape(vs, 1);
+		
 		}
 
 		public Socket socket {
@@ -42,7 +59,7 @@ namespace ServerParts
 				_socket = value;
 			}
 		}
-		public Point Ship_pos {
+		public S_Point Ship_pos {
 			get {
 				return ship_pos;
 			}
@@ -75,13 +92,18 @@ namespace ServerParts
 				name = value;
 			}
 		}
+
+		public ServerParts.S_Point[] Ship_verts {
+			get{ return ship_verts;}
+			set{ ship_verts = value;}
+		}
 	}
 	
-	public class Point{
+	public class S_Point{
 		
 		private float _x, _y;
 		
-		public Point(float x = 0, float y = 0)
+		public S_Point(float x = 0, float y = 0)
 		{
 			this.x = x;
 			this.y = y;
@@ -97,6 +119,12 @@ namespace ServerParts
 			set{_y = value;}
 		}
 		
+		public Vector2 AsXNAVector()
+		{
+			return new Vector2(_x, _y);
+		}
+		
+		
 	}
 	
 	public class Packet
@@ -111,7 +139,7 @@ namespace ServerParts
 			this.s_data = s_data;
 			this.b_data = b_data;
 			this.is_request = request;
-			size = sizeof(s_data) + sizeof(b_data);
+			
 			
 			foreach(byte b in b_data)
 			{
@@ -119,6 +147,7 @@ namespace ServerParts
 			}
 			
 			bytes.Add(byte.Parse(s_data));
+			size = sizeof(byte) * bytes.Count;
 			
 		}
 

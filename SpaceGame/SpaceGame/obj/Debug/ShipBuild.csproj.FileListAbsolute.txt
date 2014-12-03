@@ -8,3 +8,10 @@ C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\Ope
 C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\OpenTK.xml
 C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.exe
 C:\Users\Burrito119\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.pdb
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuild.exe.config
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuild.exe
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuild.pdb
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\OpenTK.pdb
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\OpenTK.xml
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.exe
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.pdb

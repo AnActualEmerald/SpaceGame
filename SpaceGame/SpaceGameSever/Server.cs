@@ -29,8 +29,10 @@ namespace SpaceGameSever
 		public const int POINT_TYPE = 0x00;
 		public const int ROT_TYPE = 0x01;
 		public const int TEX_TYPE = 0x02;
+		public const int VERTS_TYPE = 0x03;
 		
-		private byte[] _buffer = new byte[10000];
+		private byte[] _buffer = new byte[2097152];
+		private ServerWorld _world = new ServerWorld(new S_Point(0, 0));
 		
 		public Server()
 		{
@@ -46,14 +48,14 @@ namespace SpaceGameSever
 			GetClientInfo(s, c);
 			clients.Add(c);
 			s.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ClientLoopRecieve), s);
-			
+			_serverSocket.BeginAccept(new AsyncCallback(AcceptCall), null);
 		}
 
 		public void GetClientInfo(Socket s, Client c)
 		{
 			SendText("getpos", s);
-			byte[] b;
-			Point pos;
+			byte[] b = new byte[2048];
+			S_Point pos;
 			int rot;
 			Bitmap tex;
 			s.Receive(b);
@@ -69,7 +71,11 @@ namespace SpaceGameSever
 			SendText("getname", s);
 			s.Receive(b);
 			c.Name = Encoding.ASCII.GetString(b);
-			
+			SendText("getverts", s);
+			s.Receive(b);
+			S_Point[] p;
+			ParseShipVerts(b, out p);
+			c.Ship_verts = p;
 		}
 		
 		public void ClientLoopRecieve(IAsyncResult r)
@@ -84,29 +90,29 @@ namespace SpaceGameSever
 		
 		public void loop()
 		{
-			while(true)
-			{
-				foreach(Client c in clients)
-				{
-					Packet p = new Packet("butts", null);
-					c.socket.BeginSend(p.Bytes.ToArray(), 0, p.Size, SocketFlags.None, , null);
-				}
-			}
+			//while(true)
+		//	{
+	//			foreach(Client c in clients)
+//				{
+				//	Packet p = new Packet("butts", null);
+					//c.socket.BeginSend(p.Bytes.ToArray(), 0, p.Size, SocketFlags.None, , null);
+				//}
+			//}
 		}
 		
 		private static void SendText(string text, Socket target){
 			byte[] data = Encoding.ASCII.GetBytes (text);
-			target.BeginSend (data, 0, data.Length, SocketFlags.None, new AsyncCallback (SendCall), target);
+		//	target.BeginSend (data, 0, data.Length, SocketFlags.None, new AsyncCallback (SendCall), target);
 		}
 		
-		private static void ParseClientinfo(byte[] b, int type, out Point pos, out int rot, out Bitmap tex)
+		private static void ParseClientinfo(byte[] b, int type, out S_Point pos, out int rot, out Bitmap tex)
 		{
 			String s = Encoding.ASCII.GetString(b);
 			String[] sa = s.Split(' ');
 			if(type == POINT_TYPE)
 			{
 				String[] p = sa[1].Split(';');
-				pos = new Point(float.Parse(p[0]), float.Parse(p[1]));
+				pos = new S_Point(float.Parse(p[0]), float.Parse(p[1]));
 				rot = 0;
 				tex = null;
 			} else if(type == ROT_TYPE)
@@ -117,7 +123,7 @@ namespace SpaceGameSever
 			}else if (type == TEX_TYPE)
 			{
 				String[] p = sa[1].Split(';');
-				tex = new Bitmap(int.Parse(p[0]), int.Parse(p[1]), 0, PixelFormat.Alpha, 0);
+				tex = new Bitmap(int.Parse(p[0]), int.Parse(p[1]), 0, PixelFormat.Alpha, IntPtr.Zero);
 				int x = 0;
 				int y = 0;
 				for(int i = 2; i < p.Length; i++)
@@ -138,8 +144,28 @@ namespace SpaceGameSever
 					pos = null;
 					rot = 0;
 				
+			}else
+			{
+				pos = null;
+				rot = 0;
+				tex = null;
 			}
 			
+		}
+		
+		public static void ParseShipVerts(byte[] b, out S_Point[] verts)
+		{
+			String s = Encoding.ASCII.GetString(b);
+			String[] v = s.Split(';');
+			List<S_Point> points = new List<S_Point>();
+			
+			foreach(String vert in v)
+			{
+				String[] xy = vert.Split(':');
+				points.Add(new S_Point(float.Parse(xy[0]), float.Parse(xy[1])));
+			}
+			
+			verts = points.ToArray();
 		}
 	}
 }
