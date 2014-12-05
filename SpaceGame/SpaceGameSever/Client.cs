@@ -28,7 +28,8 @@ namespace ServerParts
 		private float ship_rot;
 		private Bitmap ship_texture;
 		private String name;
-		private Shape ship_body;
+		private Shape ship_shape;
+		private Body ship_body;
 		private S_Point[] ship_verts;
 		
 		public Client(Socket socket, String name = null, S_Point ship_pos = null, float ship_rot = 0, Bitmap ship_tex = null)
@@ -96,6 +97,24 @@ namespace ServerParts
 		public ServerParts.S_Point[] Ship_verts {
 			get{ return ship_verts;}
 			set{ ship_verts = value;}
+		}
+
+		public Shape Ship_shape {
+			get {
+				return ship_shape;
+			}
+			set {
+				ship_shape = value;
+			}
+		}
+
+		public Body Ship_body {
+			get {
+				return ship_body;
+			}
+			set {
+				ship_body = value;
+			}
 		}
 	}
 	

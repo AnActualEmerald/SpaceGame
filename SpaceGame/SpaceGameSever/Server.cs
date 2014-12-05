@@ -47,6 +47,7 @@ namespace SpaceGameSever
 			Client c = new Client(s);
 			GetClientInfo(s, c);
 			clients.Add(c);
+			
 			s.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ClientLoopRecieve), s);
 			_serverSocket.BeginAccept(new AsyncCallback(AcceptCall), null);
 		}

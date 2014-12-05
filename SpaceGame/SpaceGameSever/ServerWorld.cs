@@ -8,6 +8,7 @@
  */
 using System;
 using FarseerPhysics.Dynamics;
+using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework;
 using ServerParts;
 
@@ -40,6 +41,27 @@ namespace SpaceGameSever
 			physWorld.RemoveBody(b);
 		}
 		
+		public void AddClient(Client c)
+		{
+			Body bod = BodyFactory.CreateBody(physWorld, c.Ship_pos.AsXNAVector(), c.Ship_rot, c.Name);
+			bod.CreateFixture(c.Ship_shape);
+			c.Ship_body = bod;
+		}
+		
+		public void RemoveClient(Client c)
+		{
+			physWorld.RemoveBody(c.Ship_body);
+		}
+
+		public bool Contains(Client c)
+		{
+			return physWorld.BodyList.Contains(c.Ship_body);
+		}
+		
+		public bool Contains(Body b)
+		{
+			return physWorld.BodyList.Contains(b);
+		}
 		
 	}
 }

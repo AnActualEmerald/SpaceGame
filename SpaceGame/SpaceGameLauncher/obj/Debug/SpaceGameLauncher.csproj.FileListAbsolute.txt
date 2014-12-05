@@ -1,0 +1,6 @@
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameLauncher\bin\Debug\SpaceGameLauncher.exe.config
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameLauncher\bin\Debug\SpaceGameLauncher.exe
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameLauncher\bin\Debug\SpaceGameLauncher.pdb
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameLauncher\obj\Debug\SpaceGameLauncher.csprojResolveAssemblyReference.cache
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameLauncher\obj\Debug\SpaceGameLauncher.exe
+C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameLauncher\obj\Debug\SpaceGameLauncher.pdb
