@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: kgauthier16
+ * User: Burrito119
  * Date: 11/25/2014
  * Time: 12:48 PM
  * 
@@ -13,7 +13,6 @@ using System.Net.Sockets;
 using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Common;
 using FarseerPhysics.Dynamics;
-using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework;
 
 namespace ServerParts
@@ -28,7 +27,7 @@ namespace ServerParts
 		private float ship_rot;
 		private Bitmap ship_texture;
 		private String name;
-		private Shape ship_shape;
+		private PolygonShape ship_shape;
 		private Body ship_body;
 		private S_Point[] ship_verts;
 		
@@ -48,7 +47,7 @@ namespace ServerParts
 			
 			Vertices vs = new Vertices(v);
 			
-			ship_body = new PolygonShape(vs, 1);
+			ship_shape = new PolygonShape(vs, 1);
 		
 		}
 
@@ -99,7 +98,7 @@ namespace ServerParts
 			set{ ship_verts = value;}
 		}
 
-		public Shape Ship_shape {
+		public PolygonShape Ship_shape {
 			get {
 				return ship_shape;
 			}

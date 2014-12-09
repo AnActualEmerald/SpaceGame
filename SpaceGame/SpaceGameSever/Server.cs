@@ -1,6 +1,6 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: kgauthier16
+ * User: Burrito119
  * Date: 11/25/2014
  * Time: 11:57 AM
  * 
@@ -81,29 +81,64 @@ namespace SpaceGameSever
 		
 		public void ClientLoopRecieve(IAsyncResult r)
 		{
-			
+			try{
+				Socket s = (Socket)r.AsyncState;
+				int i = s.EndReceive(r);
+				byte[] d = new byte[i];
+				Array.Copy(_buffer, d, i);
+				
+				Client c = GetClientBySocket(s);
+				
+				
+				s.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ClientLoopRecieve), s);
+			}catch(SocketException e){
+				Console.WriteLine("Client disconnect");
+			}
 		}
 		
-		public void ClientSend(IAsyncResult r)
+		public void ClientRecieve(IAsyncResult r)
 		{
-			
+			try{
+				Socket s = (Socket)r.AsyncState;
+				int i = s.EndReceive(r);
+				byte[] d = new byte[i];
+				Array.Copy(_buffer, d, i);
+				
+				Client c = GetClientBySocket(s);
+				
+				Console.WriteLine(Encoding.ASCII.GetString(d));
+				
+				//s.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ClientLoopRecieve), s);
+			}catch(SocketException e){
+				Console.WriteLine("Client disconnect");
+			}
+		}
+		
+		public void ClientSendCall(IAsyncResult r)
+		{
+			Socket s = (Socket)r.AsyncState;
+			s.EndSend (r);
 		}
 		
 		public void loop()
 		{
-			//while(true)
-		//	{
-	//			foreach(Client c in clients)
-//				{
-				//	Packet p = new Packet("butts", null);
-					//c.socket.BeginSend(p.Bytes.ToArray(), 0, p.Size, SocketFlags.None, , null);
-				//}
-			//}
+			while(true)
+			{
+				
+				_world.step();
+				foreach(Client c in clients)
+				{
+					SendText("ping", c.socket);
+					_serverSocket.BeginReceiveFrom(_buffer, 0, _buffer.Length, SocketFlags.None,
+					                              ref c.socket.RemoteEndPoint, new AsyncCallback(ClientLoopRecieve), _serverSocket);
+					
+				}
+			}
 		}
 		
 		private static void SendText(string text, Socket target){
 			byte[] data = Encoding.ASCII.GetBytes (text);
-		//	target.BeginSend (data, 0, data.Length, SocketFlags.None, new AsyncCallback (SendCall), target);
+			target.BeginSend (data, 0, data.Length, SocketFlags.None, new AsyncCallback (ClientSendCall), target);
 		}
 		
 		private static void ParseClientinfo(byte[] b, int type, out S_Point pos, out int rot, out Bitmap tex)
@@ -167,6 +202,15 @@ namespace SpaceGameSever
 			}
 			
 			verts = points.ToArray();
+		}
+		
+		public Client GetClientBySocket(Socket s)
+		{
+			foreach(Client c in clients)
+				if(c.socket.RemoteEndPoint.Equals(s.RemoteEndPoint))
+					return c;
+			
+			return null;
 		}
 	}
 }
