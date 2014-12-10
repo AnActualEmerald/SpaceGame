@@ -21,6 +21,8 @@ namespace Networking
 	 	IPEndPoint target;
 	 	Socket _socket;
 		
+	 	private Vector2D pos;
+	 	
 		public Client(String IPTarget, int port)
 		{
 			target = new IPEndPoint(new IPAddress(Encoding.ASCII.GetBytes(IPTarget)), port);
@@ -37,7 +39,8 @@ namespace Networking
 				
 				if(_socket.Connected)
 				{
-					
+					finishConnect();
+					loop();
 					break;
 				}
 				
@@ -47,6 +50,41 @@ namespace Networking
 			}while(i < attempts);
 		}
 		
+		private void finishConnect()
+		{
+			byte[] b = new byte[1024];
+			String s = String.Empty;
+			do{
+				_socket.Receive(b, b.Length, SocketFlags.None);
+				
+				s = Encoding.ASCII.GetString(b);
+				
+			}while(s != "start");
+			
+		}
 		
+		private Object ParseSeverRequest(String s)
+		{
+			if(s == "getpos")
+				
+		}
+		
+		private void loop()
+		{
+			byte[] b = new byte[2048];
+			
+			while(true)
+			{
+				
+			}
+			
+			
+		}
+		
+		
+		private void parse(byte[] bytes)
+		{
+			
+		}
 	}
 }

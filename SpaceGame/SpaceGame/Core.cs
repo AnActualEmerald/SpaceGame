@@ -40,8 +40,8 @@ namespace Core
 
 			GameObject obj = new GameObject ();
 			RenderMask msk = new RenderMask (obj, ResLoader.GetTextureId(
-				ResLoader.LoadImage("C:/users/burrito119/pictures/Surprised pat.png")));
-
+				ResLoader.LoadImage("C:/users/kgauthier16/pictures/lusitania.jpg")));
+			
 			obj.AddComponent (msk);
 			root.AddChild (obj);
 

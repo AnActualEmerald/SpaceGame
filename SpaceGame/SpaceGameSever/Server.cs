@@ -77,6 +77,7 @@ namespace SpaceGameSever
 			S_Point[] p;
 			ParseShipVerts(b, out p);
 			c.Ship_verts = p;
+			SendText("start", s);
 		}
 		
 		public void ClientLoopRecieve(IAsyncResult r)
