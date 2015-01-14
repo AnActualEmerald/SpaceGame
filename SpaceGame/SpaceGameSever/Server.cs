@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Net;
 using System.Text;
 using ServerParts;
 using System.Drawing;
@@ -115,7 +116,7 @@ namespace SpaceGameSever
 			}
 		}
 		
-		public void ClientSendCall(IAsyncResult r)
+		public static void ClientSendCall(IAsyncResult r)
 		{
 			Socket s = (Socket)r.AsyncState;
 			s.EndSend (r);
@@ -130,8 +131,9 @@ namespace SpaceGameSever
 				foreach(Client c in clients)
 				{
 					SendText("ping", c.socket);
+					EndPoint p = c.socket.RemoteEndPoint;
 					_serverSocket.BeginReceiveFrom(_buffer, 0, _buffer.Length, SocketFlags.None,
-					                              ref c.socket.RemoteEndPoint, new AsyncCallback(ClientLoopRecieve), _serverSocket);
+					                              ref p, new AsyncCallback(ClientLoopRecieve), _serverSocket);
 					
 				}
 			}

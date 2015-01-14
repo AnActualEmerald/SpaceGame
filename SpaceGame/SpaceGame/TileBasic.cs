@@ -8,6 +8,7 @@
  */
 using System;
 using Game;
+using Microsoft.Xna.Framework;
 
 namespace ShipBuild
 {
@@ -21,6 +22,7 @@ namespace ShipBuild
 
 		protected String _name;
 		protected int _data;
+		protected Vector2 inship_pos;
 		
 		public TileBasic(String name)
 		{

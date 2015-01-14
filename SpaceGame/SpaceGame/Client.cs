@@ -10,6 +10,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace Networking
 {
@@ -21,7 +22,7 @@ namespace Networking
 	 	IPEndPoint target;
 	 	Socket _socket;
 		
-	 	private Vector2D pos;
+	 	private Vector2 pos;
 	 	
 		public Client(String IPTarget, int port)
 		{
@@ -66,6 +67,9 @@ namespace Networking
 		private Object ParseSeverRequest(String s)
 		{
 			if(s == "getpos")
+				Console.WriteLine("Sadly, this isn't done yet");
+			
+			return null;
 				
 		}
 		

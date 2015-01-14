@@ -50,6 +50,8 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Input.cs" />
+    <Compile Include="UIButton.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Component.cs" />
