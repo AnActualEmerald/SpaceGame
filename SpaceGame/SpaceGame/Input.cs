@@ -21,5 +21,10 @@ namespace Core
 		{
 			return new Vector2(Mouse.GetCursorState().X, Mouse.GetCursorState().Y);
 		}
+		
+		public static bool GetM1Down()
+		{
+			return Mouse.GetState().IsButtonDown(MouseButton.Left);
+		}
 	}
 }

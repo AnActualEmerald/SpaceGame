@@ -1,15 +1,17 @@
 ﻿using Graphics;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using FarseerPhysics.Dynamics;
 using System;
 using System.Drawing;
 using Game;
 using Files;
+using Core.Graphics;
 
 
 namespace Core
 {
-    class CoreEngine
+    public class CoreEngine
     {
         private Display display;
 
@@ -17,7 +19,11 @@ namespace Core
         private long timeNowTicks, lastTimeTicks;
         private int frames, ticks;
         private double deltaTicks = 0.0;
-        
+				
+        private RenderingEngine UIEngine;
+        private RenderingEngine TileEngine;
+        private RenderingEngine BackgroundEngine;
+        private World p_world; 
 
 
 		public GameObject root;
@@ -32,6 +38,7 @@ namespace Core
             this.maxFrames = maxFrames;
             this.maxTicks = maxTicks;
 			root = new GameObject ();
+			p_world = new World(Vector2(0, 0));
         }
 
 		public void loadRes(Object sender, EventArgs e)
@@ -86,6 +93,9 @@ namespace Core
 			GL.Clear (ClearBufferMask.ColorBufferBit);
             frames++;
 			root.Render ();
+			UIEngine.Render();
+			TileEngine.Render();
+			BackgroundEngine.Render();
 			display.SwapBuffers ();
         }
 
@@ -108,6 +118,21 @@ namespace Core
 
 			GL.Enable (EnableCap.Texture2D);
 
+		}
+		
+		public World GetWorld()
+		{
+			return p_world;
+		}
+		
+		public RenderingEngine GetEngine(String t)
+		{
+			if(t == "ui")
+				return UIEngine;
+			if(t == "t")
+				return TileEngine;
+			if(t == "b")
+				return BackgroundEngine;
 		}
     }
 }

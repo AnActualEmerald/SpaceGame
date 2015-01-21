@@ -13,6 +13,7 @@ using FarseerPhysics.Common;
 using Microsoft.Xna.Framework;
 using Game;
 using Core;
+using Core.Graphics;
 
 namespace GUI
 {
@@ -27,14 +28,15 @@ namespace GUI
 		private ButtonState renderState;
 		
 		private Fixture rect;
+		private RenderingEngine renderer;
 		
-		public event EventHandler<EventArgs> OnClick = delegate(Object sender){};
-		public event EventHandler<EventArgs> OnRelease = delegate(Object sender){};
+		public event Action<Object> OnClick;
+		public event Action<Object> OnRelease;
 		
-		public UIButton(Vector2 pos, float width, float height, String texture_loaction, World world)
+	
+		public UIButton(Vector2 pos, float width, float height, String texture_loaction, CoreEngine c)
 		{
-			Body bod = new Body(world, pos);
-			
+			Body bod = new Body(c.GetWorld(), pos);
 			Vertices verts = new Vertices();
 			verts.Add(new Vector2(0, 0));
 			verts.Add(new Vector2(0 + width, 0));
@@ -44,6 +46,8 @@ namespace GUI
 			Shape s = new PolygonShape(verts, 0);
 			rect = bod.CreateFixture(s);
 			rect.Body.Position = pos;
+			
+			renderer = ref c.GetEngine("button");
 		}
 				
 		public override void Render()
@@ -70,6 +74,8 @@ namespace GUI
 			base.Update();
 			if(CheckPoint(CoreInput.GetMousePos(), this, false))
 				renderState = ButtonState.ACTIVE;
+			else if(CheckPoint(CoreInput.GetMousePos(), this, CoreInput.GetM1Down()))
+				renderState = ButtonState.CLICKED;
 			else
 				renderState = ButtonState.INACTIVE;
 		}
