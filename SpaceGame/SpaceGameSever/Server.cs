@@ -126,8 +126,14 @@ namespace SpaceGameSever
 		{
 			while(true)
 			{
-				
+				//manage any connections
+				//update clients of new players
+				//take client intput
+				//step physics 
 				_world.step();
+				//send results to clients
+				//???
+				//profit
 				foreach(Client c in clients)
 				{
 					SendText("ping", c.socket);
