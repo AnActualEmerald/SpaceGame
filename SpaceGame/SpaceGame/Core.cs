@@ -21,6 +21,7 @@ namespace Core
         private double deltaTicks = 0.0;
 				
         private RenderingEngine UIEngine;
+        private TextEngine textRenderer;
         private RenderingEngine TileEngine;
         private RenderingEngine BackgroundEngine;
         private World p_world; 
@@ -133,6 +134,13 @@ namespace Core
 				return TileEngine;
 			if(t == "b")
 				return BackgroundEngine;
+			
+			return null;
+		}
+		
+		public TextEngine GetTextRenderer()
+		{
+			return textRenderer;
 		}
     }
 }

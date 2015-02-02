@@ -7,6 +7,9 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using OpenTK.Graphics.OpenGL;
 
 namespace Core.Graphics
 {
@@ -15,15 +18,42 @@ namespace Core.Graphics
 	/// </summary>
 	public class RenderingEngine
 	{
-		private 
+		private List<RenderRequest> requests;
 		
 		public RenderingEngine()
 		{
+			requests = new List<RenderRequest>();
+			
 		}
 		
 		public void Render()
 		{
-			
+			foreach(RenderRequest r in requests)
+			{
+				r.GetMask().Render();
+			}
+		}
+		
+		public void Clear()
+		{
+			requests.Clear();
 		}
 	}
+	
+	public class RenderRequest
+	{
+		private RenderMask mask;
+		
+		public RenderRequest(ref RenderMask mask)
+		{
+			this.mask = mask;
+		}
+		
+		public RenderMask GetMask()
+		{
+			return mask;
+		}
+		
+	}
+	
 }

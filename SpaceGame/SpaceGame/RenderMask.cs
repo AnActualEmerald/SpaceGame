@@ -2,9 +2,10 @@
 using Game;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System.Drawing;
+using FarseerPhysics.Common;
+//using Microsoft.Xna.Framework;
 
-namespace Graphics
+namespace Core.Graphics
 {
 	public class RenderMask : Component
 	{
@@ -13,23 +14,17 @@ namespace Graphics
 		protected uint tex_buff_id;
 		protected uint index_id;
 
-		private static float[] verts = new float[]{
+		private float[] verts = new float[]{
 			0.0f, 0.0f,
-			0.0f, 256.0f,
-			256.0f, 256.0f,
-			256.0f, 0.0f };
+			0.0f, 64.0f,
+			64.0f, 64.0f,
+			64.0f, 0.0f };
 
 		private static float[] tex_coords = new float[]{
 			0.0f, 0.0f, 
 			0.0f, 1.0f, 
 			1.0f, 1.0f, 
 			1.0f, 0.0f};
-
-		private static double[] colors = new double[]{
-			0, 0, 0,
-			1, 0, 0,
-			0, 1, 0,
-			0, 0, 1 };
 
 		private static ushort[] index = new ushort[]{0, 1, 2, 3};
 
@@ -50,32 +45,27 @@ namespace Graphics
 			this.tex_id = id;
 		}
 
-		public static int CreateID(byte[] pix, int width, int height)
+		public void SetVerts(Vertices verts)
 		{
-			int id = 0;
-			GL.GenTextures (1, out id);
-			GL.BindTexture (TextureTarget.Texture2D, id);
-			GL.TexImage2D (TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, width, height, 0, 
-				PixelFormat.Rgb, PixelType.UnsignedByte, pix);
-			return id;
+			foreach(Vector2 v in verts.ToArray())
+			{
+				
+			}
 		}
-
-		int color_id;
-
+		
 		protected void init_vbo()
 		{
 			GL.GenBuffers (1, out vbo_id);
 			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo_id);
-			GL.BufferData (BufferTarget.ArrayBuffer, new IntPtr(verts.Length * 8 * sizeof(float)), verts, BufferUsageHint.StaticDraw);
+			GL.BufferData (BufferTarget.ArrayBuffer, 
+			               new IntPtr(verts.Length * 8 * sizeof(float)), 
+			               verts, BufferUsageHint.StaticDraw);
 
 			GL.GenBuffers (1, out tex_buff_id);
 			GL.BindBuffer (BufferTarget.ArrayBuffer, tex_buff_id);
-			GL.BufferData (BufferTarget.ArrayBuffer, new IntPtr (tex_coords.Length * 8 * sizeof(float)), tex_coords, BufferUsageHint.StaticDraw);
-
-			GL.GenBuffers (1, out color_id);
-			GL.BindBuffer (BufferTarget.ArrayBuffer, color_id);
-			GL.BufferData (BufferTarget.ArrayBuffer, new IntPtr (colors.Length * 12 * sizeof(double)), colors, BufferUsageHint.StaticDraw);
-
+			GL.BufferData (BufferTarget.ArrayBuffer,
+			               new IntPtr (tex_coords.Length * 8 * sizeof(float)),
+			               tex_coords, BufferUsageHint.StaticDraw);
 		}
 
 		public override void Render()
@@ -89,11 +79,7 @@ namespace Graphics
 			GL.BindBuffer (BufferTarget.ArrayBuffer, tex_buff_id);
 			GL.EnableClientState (ArrayCap.TextureCoordArray);
 			GL.TexCoordPointer (2, TexCoordPointerType.Float, 0, 0);
-
-			//GL.BindBuffer (BufferTarget.ArrayBuffer, color_id);
-			//GL.EnableClientState (ArrayCap.ColorArray);
-			//GL.ColorPointer (3, ColorPointerType.Double, 0, 0);
-
+			
 			GL.DrawArrays (PrimitiveType.Quads, 0, verts.Length * 8);
 
 			GL.DisableClientState (ArrayCap.VertexArray);

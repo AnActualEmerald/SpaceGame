@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Input.cs" />
     <Compile Include="RenderingEngine.cs" />
+    <Compile Include="TextEngine.cs" />
     <Compile Include="UIButton.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Client.cs" />

@@ -22,9 +22,9 @@ namespace GUI
 	/// </summary>
 	public class UIButton : GameObject
 	{
-		private int inactive_id;
-		private int active_id;
-		private int pressed_id;
+		private RenderMask inactive;
+		private RenderMask active;
+		private RenderMask pressed;
 		private ButtonState renderState;
 		
 		private Fixture rect;
@@ -47,7 +47,7 @@ namespace GUI
 			rect = bod.CreateFixture(s);
 			rect.Body.Position = pos;
 			
-			renderer = ref c.GetEngine("button");
+			renderer = c.GetEngine("ui");
 		}
 				
 		public override void Render()
