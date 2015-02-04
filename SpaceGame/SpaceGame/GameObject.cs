@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Core;
 
 namespace Game
 {
@@ -12,26 +13,32 @@ namespace Game
         protected List<Component> components;
         protected GameObject parent;
 		protected bool is_root;
-
-		public GameObject(GameObject parent)
+		protected CoreEngine world;
+			
+		public GameObject(GameObject parent, CoreEngine world)
         {
-            init();
+			_init_lists();
             this.parent = parent;
 			if (parent == null)
 				is_root = true;
+			if(world != null)
+				this.world = world;
         }
 
-		public GameObject(GameObject parent = null, IEnumerable<GameObject> rest = null)
+		public GameObject(GameObject parent = null, CoreEngine world = null,  IEnumerable<GameObject> rest = null)
         {
-            init();
+            _init_lists();
             this.parent = parent;
 
 			if (parent == null)
 				is_root = true;
-
+			
+			if(world != null)
+				this.world = world;
+			
 			if (rest == null)
 				return;
-            foreach(GameObject g in rest)
+			foreach(GameObject g in rest)
             {
                 AddChild(g);
             }
@@ -64,6 +71,11 @@ namespace Game
                 c.Render();
         }
 
+        public virtual CoreEngine GetWorld()
+        {
+        	return world;
+        }
+        
         // Add methods return this for easy constructing
         public virtual GameObject AddChild(GameObject g)
         {
@@ -77,11 +89,19 @@ namespace Game
             return this;
         }
 
-        // Convinience method for multiple constructors
-        private void init()
+        private void _init_lists()
         {
-            children = new List<GameObject>();
+        	children = new List<GameObject>();
             components = new List<Component>();
+        }
+        
+        // Convinience method for multiple constructors
+        public virtual void init()
+        {
+        	foreach(GameObject g in children)
+        		g.init();
+        	foreach(Component c in components)
+        		c.init();
         }
 
     }

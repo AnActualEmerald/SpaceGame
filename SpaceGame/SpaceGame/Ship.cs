@@ -20,9 +20,9 @@ namespace ShipBuild
 	{
 		private DataFile shipFile;
 		private List<TileData> tiles = new List<TileData>();
-		private SpaceWorld world;
+		private List<TileBasic> render_tiles = new List<TileBasic>();
 		
-		public Ship(String name, SpaceWorld world)
+		public Ship(String name)
 		{
 			shipFile = new DataFile("./ships/" + name + ".shp");		
 			String s;
@@ -30,23 +30,45 @@ namespace ShipBuild
 				shipFile.Parse(s, out tiles);
 			else
 				shipFile.SaveTileData(new TileData(), false);	
-
-			this.world = world;
+			
+			render_tiles = tiles != null ? buildShip(tiles) : new List<TileBasic>();
 		}
 		
-		public static Component[] buildShip(List<TileData> tiles)
+		public static List<TileBasic> buildShip(List<TileData> tiles)
 		{
-			List<Component> cc = new List<Component>();
+			List<TileBasic> cc = new List<TileBasic>();
 			
 			foreach(TileData td in tiles)
 			{
-				if(td.GetProperty("name").Equals("s_thruster"))
-					cc.Add(TileBasic.smallThrust);
+				switch((String)td.GetProperty("name")){
+					case "s_thrust":
+						cc.Add(AddTile(td, TileBasic.smallThrust));
+						continue;
+					case "l_hull":
+						cc.Add(AddTile(td, TileBasic.lightHull));
+						continue;
+					case "l_thrust":
+						cc.Add(AddTile(td, TileBasic.largeThrust));
+						continue;
+					default:
+						cc.Add(AddTile(td, TileBasic.space));
+						continue;
+				}
+				
 			}
 
-			return cc.ToArray();
+			return cc;
 		}
-
+		
+		private static TileBasic AddTile(TileData t, TileBasic tb)
+		{
+			Object v = (String)t.GetProperty("vert");
+			String[] xy = ((String)v).Split(';');
+			tb.pos = new Microsoft.Xna.Framework.Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
+			v = t.GetProperty("data");
+			tb.data = (int)v;
+			return tb;
+		}
 
 	}
 }

@@ -23,7 +23,7 @@ namespace Core.Graphics
 	/// <summary>
 	/// Description of TextRenderer.
 	/// </summary>
-	public class TextEngine : Component
+	public class TextEngine
 	{
 		
 		

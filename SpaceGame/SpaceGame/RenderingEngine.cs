@@ -8,8 +8,6 @@
  */
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using OpenTK.Graphics.OpenGL;
 
 namespace Core.Graphics
 {
@@ -30,13 +28,18 @@ namespace Core.Graphics
 		{
 			foreach(RenderRequest r in requests)
 			{
-				r.GetMask().Render();
+				r.GetMask().Draw();
 			}
 		}
 		
 		public void Clear()
 		{
 			requests.Clear();
+		}
+		
+		public void MakeRequest(RenderRequest r)
+		{
+			this.requests.Add(r);
 		}
 	}
 	

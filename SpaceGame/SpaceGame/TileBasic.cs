@@ -18,15 +18,30 @@ namespace ShipBuild
 	public class TileBasic : Component
 	{
 
-		public static SmallThrustTile smallThrust = new SmallThrustTile ("s_thrust");
-
+		public static TileBasic smallThrust = new TileBasic ("s_thrust");
+		public static TileBasic lightHull = new TileBasic("l_hull");
+		public static TileBasic largeThrust = new TileBasic("l_thrust");
+		public static TileBasic space = new TileBasic("space");
+		
 		protected String _name;
 		protected int _data;
 		protected Vector2 inship_pos;
 		
+		public int id;
+		
 		public TileBasic(String name)
 		{
 			this.name = name;
+			
+			try{
+				id = Files.ResLoader.GetTextureId(Files.ResLoader.LoadImage("./res/tiles/" + name));
+			}catch(Exception c){
+				Console.Error.WriteLine("Tile ini failed for " + name + "... error loading texture?");
+				Console.Error.WriteLine(c.Message);
+				Console.Error.WriteLine(c.StackTrace);
+				Console.Error.WriteLine("Can't have missing textures 'round here, exiting program...");
+				Environment.Exit(-18);
+			}
 		}
 		
 		public virtual int data{
@@ -39,7 +54,15 @@ namespace ShipBuild
 			get { return _name; }
 			set { _name = value; }
 		}
-		
+
+		public virtual Vector2 pos {
+			get {
+				return inship_pos;
+			}
+			set {
+				inship_pos = value;
+			}
+		}
 		public override void Render()
 		{
 			
@@ -51,6 +74,11 @@ namespace ShipBuild
 		}
 		
 		public override void Input()
+		{
+			
+		}
+		
+		public override void init()
 		{
 			
 		}

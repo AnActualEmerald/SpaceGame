@@ -186,10 +186,8 @@
     <Compile Include="RenderMask.cs" />
     <Compile Include="ResLoader.cs" />
     <Compile Include="Ship.cs" />
-    <Compile Include="SmallThrustTile.cs" />
     <Compile Include="TileBasic.cs" />
     <Compile Include="TileData.cs" />
-    <Compile Include="SpaceWorld.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

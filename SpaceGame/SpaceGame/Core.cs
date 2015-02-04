@@ -1,4 +1,5 @@
-﻿using Graphics;
+﻿using System.IO;
+using Graphics;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using FarseerPhysics.Dynamics;
@@ -25,7 +26,7 @@ namespace Core
         private RenderingEngine TileEngine;
         private RenderingEngine BackgroundEngine;
         private World p_world; 
-
+        private StreamWriter errorLog;
 
 		public GameObject root;
 
@@ -35,25 +36,33 @@ namespace Core
          * */
         public CoreEngine(string title, int maxTicks, int maxFrames)
         {
+        	TileEngine = new RenderingEngine();
+			UIEngine = new RenderingEngine();
+			BackgroundEngine = new RenderingEngine();
             display = new Display(title);
             this.maxFrames = maxFrames;
             this.maxTicks = maxTicks;
 			root = new GameObject ();
-			p_world = new World(Vector2(0, 0));
+			p_world = new World(new Microsoft.Xna.Framework.Vector2(0, 0));
+			errorLog = new StreamWriter("./error.err");
+			Console.SetError(errorLog);
         }
 
 		public void loadRes(Object sender, EventArgs e)
         {
 			init_view ();
 
-			GameObject obj = new GameObject ();
-			RenderMask msk = new RenderMask (obj, ResLoader.GetTextureId(
-				ResLoader.LoadImage("C:/users/kgauthier16/pictures/lusitania.jpg")));
+			GameObject obj = new GameObject (root, this);
+			RenderMask msk = new RenderMask (obj, "t", ResLoader.GetTextureId(
+				ResLoader.LoadImage("./pipes.jpg")));
 			
 			obj.AddComponent (msk);
 			root.AddChild (obj);
 
-			SetClearColor (Color.AliceBlue);
+			SetClearColor (Color.Black);
+			
+			//has to be the last thing done here
+			root.init();
 		}
 
         public virtual void start()
@@ -98,6 +107,9 @@ namespace Core
 			TileEngine.Render();
 			BackgroundEngine.Render();
 			display.SwapBuffers ();
+			UIEngine.Clear();
+			TileEngine.Clear();
+			BackgroundEngine.Clear();
         }
 
         public virtual void SetClearColor(Color c)
@@ -115,9 +127,9 @@ namespace Core
 			GL.MatrixMode (MatrixMode.Projection);
 			GL.LoadIdentity ();
 		    GL.Ortho (0, display.Width, display.Height, 0, -1, 1);
-			GL.MatrixMode (MatrixMode.Modelview);		
+		    //GL.MatrixMode (MatrixMode.Modelview);
 
-			GL.Enable (EnableCap.Texture2D);
+		    GL.Enable (EnableCap.Texture2D);
 
 		}
 		
@@ -130,11 +142,11 @@ namespace Core
 		{
 			if(t == "ui")
 				return UIEngine;
-			if(t == "t")
+			if(t.ToLower().Equals("t"))
 				return TileEngine;
 			if(t == "b")
 				return BackgroundEngine;
-			
+		
 			return null;
 		}
 		

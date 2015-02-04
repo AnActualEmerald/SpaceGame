@@ -44,5 +44,10 @@ namespace Game
 		{
 			
 		}
+		
+		public override void init()
+		{
+			
+		}
 	}
 }
