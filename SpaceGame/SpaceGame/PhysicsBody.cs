@@ -24,6 +24,11 @@ namespace Game
 			this.parent = parent;
 			_body = new Body (world, position, rotation, userdata);
 		}
+		
+		public Fixture CreateFixture(Shape s)
+		{
+			return _body.CreateFixture(s);
+		}
 
 		public virtual Body body{
 			get {return _body;}

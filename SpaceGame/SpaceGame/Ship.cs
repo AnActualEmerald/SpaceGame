@@ -8,19 +8,28 @@
  */
 using System;
 using System.Collections.Generic;
+using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Common;
+using FarseerPhysics.Dynamics;
 using FileManager;
 using Game;
+using Microsoft.Xna.Framework;
 
 namespace ShipBuild
 {
 	/// <summary>
 	/// Description of Ship.
 	/// </summary>
-	public class Ship : GameObject
+	public sealed class Ship : GameObject
 	{
 		private DataFile shipFile;
 		private List<TileData> tiles = new List<TileData>();
 		private List<TileBasic> render_tiles = new List<TileBasic>();
+		private PhysicsBody body;
+		private Fixture s_fixture;
+		
+		private int max_thrust;
+		private int ship_tex_id;
 		
 		public Ship(String name)
 		{
@@ -32,41 +41,54 @@ namespace ShipBuild
 				shipFile.SaveTileData(new TileData(), false);	
 			
 			render_tiles = tiles != null ? buildShip(tiles) : new List<TileBasic>();
+			init_thrust(render_tiles);
+			
+			body = new PhysicsBody(world.GetWorld(), 
+			                       new Vector2(0, 0), 
+			                       0, null, this);
+			
+			
+			
+			s_fixture = body.CreateFixture(new PolygonShape());
+			
+			AddComponent(body);
 		}
 		
-		public static List<TileBasic> buildShip(List<TileData> tiles)
+		protected void init_thrust(List<TileBasic> t)
+		{
+			foreach(TileBasic tb in t)
+			{
+				if(tb.name == "s_thrust" || tb.name == "l_thrust")
+					max_thrust += tb.data;
+			}
+		}
+		
+		public Vertices FindVerts()
+		{
+				
+		}
+		
+		public List<TileBasic> buildShip(List<TileData> tiles)
 		{
 			List<TileBasic> cc = new List<TileBasic>();
 			
 			foreach(TileData td in tiles)
 			{
-				switch((String)td.GetProperty("name")){
-					case "s_thrust":
-						cc.Add(AddTile(td, TileBasic.smallThrust));
-						continue;
-					case "l_hull":
-						cc.Add(AddTile(td, TileBasic.lightHull));
-						continue;
-					case "l_thrust":
-						cc.Add(AddTile(td, TileBasic.largeThrust));
-						continue;
-					default:
-						cc.Add(AddTile(td, TileBasic.space));
-						continue;
-				}
-				
+				cc.Add(AddTile(td));
 			}
 
 			return cc;
 		}
 		
-		private static TileBasic AddTile(TileData t, TileBasic tb)
+		private TileBasic AddTile(TileData t)
 		{
+			TileBasic tb = new TileBasic(t.GetProperty("name"), this);
 			Object v = (String)t.GetProperty("vert");
 			String[] xy = ((String)v).Split(';');
-			tb.pos = new Microsoft.Xna.Framework.Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
+			tb.pos = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
 			v = t.GetProperty("data");
 			tb.data = (int)v;
+			
 			return tb;
 		}
 
