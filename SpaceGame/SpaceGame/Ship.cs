@@ -20,7 +20,7 @@ namespace ShipBuild
 	/// <summary>
 	/// Description of Ship.
 	/// </summary>
-	public sealed class Ship : GameObject
+	public class Ship : GameObject
 	{
 		private DataFile shipFile;
 		private List<TileData> tiles = new List<TileData>();
@@ -65,7 +65,7 @@ namespace ShipBuild
 		
 		public Vertices FindVerts()
 		{
-				
+			return null;
 		}
 		
 		public List<TileBasic> buildShip(List<TileData> tiles)
@@ -82,7 +82,7 @@ namespace ShipBuild
 		
 		private TileBasic AddTile(TileData t)
 		{
-			TileBasic tb = new TileBasic(t.GetProperty("name"), this);
+			TileBasic tb = new TileBasic((String)t.GetProperty("name"), this);
 			Object v = (String)t.GetProperty("vert");
 			String[] xy = ((String)v).Split(';');
 			tb.pos = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));

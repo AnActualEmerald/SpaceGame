@@ -28,6 +28,8 @@ namespace Core
         private World p_world; 
         private StreamWriter errorLog;
 
+		public Action<Object> load;
+
 		public GameObject root;
 
         /*
@@ -52,15 +54,8 @@ namespace Core
         {
 			init_view ();
 
-			GameObject obj = new GameObject (root, this);
-			RenderMask msk = new RenderMask (obj, "t", ResLoader.GetTextureId(
-				ResLoader.LoadImage("./pipes.jpg")));
-			
-			obj.AddComponent (msk);
-			root.AddChild (obj);
+			load.Invoke (sender);
 
-			SetClearColor (Color.Black);
-			
 			//has to be the last thing done here
 			root.init();
 		}

@@ -8,7 +8,9 @@
  */
 using System;
 using FarseerPhysics.Dynamics;
+using FarseerPhysics.Collision;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Collision.Shapes;
 
 namespace Game
 {

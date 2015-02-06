@@ -1,9 +1,6 @@
 ﻿using System;
 using Core;
-using System.Drawing;
 using Game;
-using Graphics;
-using Files;
 
 namespace OpenTkTest
 {
@@ -14,7 +11,18 @@ namespace OpenTkTest
 
         public static void Main(String[] args)
         {
+			c.load += load;
 			c.start ();
         }
+
+		private static void load(object o)
+		{
+			GameObject g = new GameObject();
+
+			c.root.AddChild (g);
+
+			Console.WriteLine (c.root.ToString());
+
+		}
     }
 }
