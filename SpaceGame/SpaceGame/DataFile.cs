@@ -75,8 +75,8 @@ namespace FileManager
 			foreach(String sl in lines)
 			{
 				String ln;
-				ln = sl.Replace(' ', ':');
-				ln = ln.Replace('\"', ' ');
+				ln = sl.Replace(' ', ':'); //replace all space with semicolon
+				ln = ln.Replace('\"', ' '); //replace all " with space
 				String[] lns = ln.Split(':');
 				int i = 0;
 				String val = "null";
@@ -141,7 +141,7 @@ namespace FileManager
 				f.Dispose();
 				writer = new StreamWriter(path, append);
 			}
-			writer.WriteLine("\"s:\"");
+			writer.WriteLine("\"s\":");
 			writer.WriteLine("\"type\"=\"" + DataBit.TILE_TYPE + 
 			                 "\" \"val\"=\"" + dat.GetProperty("name") + "\":");
 			foreach(String s in dat.getKeys())

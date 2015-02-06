@@ -14,6 +14,7 @@ using FarseerPhysics.Dynamics;
 using FileManager;
 using Game;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Factories;
 
 namespace ShipBuild
 {
@@ -30,9 +31,12 @@ namespace ShipBuild
 		
 		private int max_thrust;
 		private int ship_tex_id;
-		
-		public Ship(String name)
+		private string name;
+
+
+		public Ship(String name, Core.CoreEngine world) : base(world.root, world)
 		{
+			this.name = name;
 			shipFile = new DataFile("./ships/" + name + ".shp");		
 			String s;
 			if(shipFile.ReadFile(out s))
@@ -40,18 +44,14 @@ namespace ShipBuild
 			else
 				shipFile.SaveTileData(new TileData(), false);	
 			
-			render_tiles = tiles != null ? buildShip(tiles) : new List<TileBasic>();
+			render_tiles = buildShip(tiles);
 			init_thrust(render_tiles);
-			
-			body = new PhysicsBody(world.GetWorld(), 
-			                       new Vector2(0, 0), 
-			                       0, null, this);
-			
-			
-			
-			s_fixture = body.CreateFixture(new PolygonShape());
-			
-			AddComponent(body);
+
+		}
+
+		public string Name {
+			get{ return name;}
+			set{ name = value;}
 		}
 		
 		protected void init_thrust(List<TileBasic> t)
@@ -62,19 +62,18 @@ namespace ShipBuild
 					max_thrust += tb.data;
 			}
 		}
-		
-		public Vertices FindVerts()
+
+		private List<TileBasic> buildShip(List<TileData> _tiles)
 		{
-			return null;
-		}
-		
-		public List<TileBasic> buildShip(List<TileData> tiles)
-		{
+
+			Console.WriteLine ("len = " + _tiles.Count);
 			List<TileBasic> cc = new List<TileBasic>();
 			
-			foreach(TileData td in tiles)
+			foreach(TileData td in _tiles)
 			{
-				cc.Add(AddTile(td));
+				TileBasic tb = AddTile (td);
+				cc.Add(tb);
+				AddChild (tb);
 			}
 
 			return cc;
@@ -86,10 +85,37 @@ namespace ShipBuild
 			Object v = (String)t.GetProperty("vert");
 			String[] xy = ((String)v).Split(';');
 			tb.pos = new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
+			if (tb.name != "s_thrust" || tb.name != "l_thrust") {
+				tb.data = 0;
+				return tb;
+			}
 			v = t.GetProperty("data");
 			tb.data = (int)v;
 			
 			return tb;
+		}
+
+		public override void init ()
+		{
+			base.init ();
+			body = new PhysicsBody(world.GetWorld(), 
+				new Vector2(0, 0), 
+				0, null, this);
+
+			foreach (TileBasic tb in render_tiles) {
+				FixtureFactory.AttachPolygon (tb.verts, 1, body.body);
+			}
+
+			AddComponent(body);
+		}
+
+		public override void Update ()
+		{
+			base.Update ();
+			foreach (TileBasic t in render_tiles)
+				if (t.name == "l_hull")
+					t.Rotate (1f);
+
 		}
 
 	}

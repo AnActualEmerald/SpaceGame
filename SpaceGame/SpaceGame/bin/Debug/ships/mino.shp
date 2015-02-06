@@ -1,0 +1,10 @@
+"s":
+"type"="name" "val"="l_hull":
+"type"="vert" "val"="0;0":
+"e":
+
+"s":
+"type"="name" "val"="s_thrust":
+"type"="vert" "val"="0;1":
+"type"="data" "val"="100":
+"e":

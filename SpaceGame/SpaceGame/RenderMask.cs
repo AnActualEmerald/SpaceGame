@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Game;
 using OpenTK.Graphics.OpenGL;
 using FarseerPhysics.Common;
+using OpenTK;
 
 namespace Core.Graphics
 {
@@ -18,9 +19,9 @@ namespace Core.Graphics
 		private RenderMask _instance;
 		private float[] verts = new float[]{
 			0.0f, 0.0f,
-			0.0f, 256.0f,
-			256.0f, 256.0f,
-			256.0f, 0.0f };
+			0.0f, 64.0f,
+			64.0f, 64.0f,
+			64.0f, 0.0f };
 
 		private static float[] tex_coords = new float[]{
 			0.0f, 0.0f, 
@@ -35,7 +36,6 @@ namespace Core.Graphics
 			this.parent = parent;
 			this.tex_id = tex_id;
 			engine_s = engine;
-			Console.WriteLine("ID is = " + tex_id);
 			init_vbo ();
 		}
 
@@ -46,6 +46,8 @@ namespace Core.Graphics
 
 		public void SetTextureId(int id)
 		{
+
+			GL.DeleteTexture (tex_id);
 			this.tex_id = id;
 		}
 
@@ -59,7 +61,12 @@ namespace Core.Graphics
 			}
 			this.verts = f_v.ToArray();
 		}
-		
+
+		public void Rotate(float angle)
+		{
+				 
+		}
+
 		protected void init_vbo()
 		{
 			GL.GenBuffers (1, out vbo_id);
@@ -67,19 +74,21 @@ namespace Core.Graphics
 			GL.BufferData (BufferTarget.ArrayBuffer, 
 			               new IntPtr(verts.Length * 8 * sizeof(float)),
 			               verts, BufferUsageHint.StaticDraw);
-			
-			
+
 			GL.GenBuffers (1, out tex_buff_id);
 			GL.BindBuffer (BufferTarget.ArrayBuffer, tex_buff_id);
 			GL.BufferData (BufferTarget.ArrayBuffer,
-			               new IntPtr (tex_coords.Length * 8 * sizeof(float)),
-			               tex_coords, BufferUsageHint.StaticDraw);
+				new IntPtr (tex_coords.Length * 8 * sizeof(float)),
+				tex_coords, BufferUsageHint.StaticDraw);
 		}
 
 		public override void Render()
 		{
-			if(engine == null)
-				throw new ArgumentNullException();
+			if (engine == null) {
+				Console.Error.WriteLine ("Oh dear, render engine null");
+				Console.Error.Flush ();
+				throw new NullReferenceException ("Render engine for engine under \"" + engine_s + "\" was null");
+			}
 			engine.MakeRequest(new RenderRequest(ref _instance));
 			
 		}
@@ -96,7 +105,7 @@ namespace Core.Graphics
 			GL.TexCoordPointer (2, TexCoordPointerType.Float, 0, 0);
 			
 			GL.BindTexture (TextureTarget.Texture2D, tex_id);
-			
+
 			GL.DrawArrays (PrimitiveType.Quads, 0, 4);
 
 			GL.DisableClientState (ArrayCap.VertexArray);
@@ -107,6 +116,11 @@ namespace Core.Graphics
 		public override void Update ()
 		{
 			_instance = this;
+
+			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo_id);
+			GL.BufferData (BufferTarget.ArrayBuffer, 
+				new IntPtr(verts.Length* 4),
+				verts, BufferUsageHint.StaticDraw);
 		}
 
 		public override void Input ()
