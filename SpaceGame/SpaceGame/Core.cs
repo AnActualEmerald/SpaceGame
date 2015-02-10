@@ -19,7 +19,7 @@ namespace Core
         private int maxTicks, maxFrames;
         private long timeNowTicks, lastTimeTicks;
         private int frames, ticks;
-        private double deltaTicks = 0.0;
+		private double deltaTicks = 0.0;
 				
         private RenderingEngine UIEngine;
         private TextEngine textRenderer;
@@ -65,6 +65,7 @@ namespace Core
             display.UpdateFrame += Update;
             display.RenderFrame += Render;
             display.Load += loadRes;
+			display.Resize += onResize;
             display.VSync = VSyncMode.Off;
             lastTimeTicks = GetTimeMillis(DateTime.Now);
             if (maxFrames != 0)
@@ -107,6 +108,14 @@ namespace Core
 			BackgroundEngine.Clear();
         }
 
+		void onResize (object sender, EventArgs e)
+		{
+			GL.Viewport (0, 0, display.Width, display.Height);
+			GL.MatrixMode (MatrixMode.Projection);
+			GL.LoadIdentity ();
+			GL.Ortho (0, display.Width, display.Height, 0, -1, 1);
+		}
+
         public virtual void SetClearColor(Color c)
         {
             GL.ClearColor(c);
@@ -121,10 +130,13 @@ namespace Core
 		{
 			GL.MatrixMode (MatrixMode.Projection);
 			GL.LoadIdentity ();
-		    GL.Ortho (0, display.Width, display.Height, 0, -1, 1);
+			GL.Ortho (0, display.Width, display.Height, 0, -1, 1);
 		    //GL.MatrixMode (MatrixMode.Modelview);
 
 		    GL.Enable (EnableCap.Texture2D);
+
+			GL.Enable (EnableCap.Blend);
+			GL.BlendFunc (BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
 		}
 		
@@ -148,6 +160,22 @@ namespace Core
 		public TextEngine GetTextRenderer()
 		{
 			return textRenderer;
+		}
+
+		public double DeltaTicks {
+			get {
+				return deltaTicks;
+			}
+		}
+
+		public float GetHorRes ()
+		{
+			return display.Width;
+		}
+
+		public float GetVertRes ()
+		{
+			return display.Height;
 		}
     }
 }

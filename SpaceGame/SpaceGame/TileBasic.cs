@@ -52,9 +52,15 @@ namespace ShipBuild
 			}
 			
 			this.mask = new RenderMask(this, "t", id);
-			AddComponent (mask);
+			//AddComponent (mask);
 
 			Console.WriteLine (name + " for ship " + parentShip.Name + " was loaded");
+		}
+
+		public Bitmap Texture {
+			get {
+				return texture;
+			}
 		}
 		
 		public virtual int data{

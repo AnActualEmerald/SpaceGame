@@ -23,11 +23,11 @@ namespace Core.Graphics
 			64.0f, 64.0f,
 			64.0f, 0.0f };
 
-		private static float[] tex_coords = new float[]{
+		private float[] tex_coords = new float[]{
 			0.0f, 0.0f, 
-			0.0f, 1.0f, 
+			1.0f, 0.0f, 
 			1.0f, 1.0f, 
-			1.0f, 0.0f};
+			0.0f, 1.0f};
 
 		private static ushort[] index = new ushort[]{0, 1, 2, 3};
 
@@ -54,12 +54,23 @@ namespace Core.Graphics
 		public void SetVerts(Vertices verts)
 		{
 			List<float> f_v = new List<float>();
+			List<float> f_c = new List<float> ();
 			for (int i = 0, maxLength = verts.ToArray().Length; i < maxLength; i++) {
 				Microsoft.Xna.Framework.Vector2 v = verts.ToArray()[i];
 				f_v.Add(v.X);
+				if (v.X > 0)
+					f_c.Add (1);
+				else
+					f_c.Add (0);
 				f_v.Add(v.Y);
+				if (v.Y > 0)
+					f_c.Add (1);
+				else
+					f_c.Add (0);
+
 			}
 			this.verts = f_v.ToArray();
+			this.tex_coords = f_c.ToArray ();
 		}
 
 		public void Rotate(float angle)
@@ -97,19 +108,27 @@ namespace Core.Graphics
 		{
 			GL.EnableClientState (ArrayCap.TextureCoordArray);
 			GL.EnableClientState(ArrayCap.VertexArray);   
-			
+
+			GL.EnableVertexAttribArray (MainClass.vertAttrib);
 			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo_id);          
 			GL.VertexPointer(2, VertexPointerType.Float, 0, 0); 
+			GL.VertexAttribPointer (MainClass.vertAttrib, 2, VertexAttribPointerType.Float, false, 0, 0);
 
+			GL.EnableVertexAttribArray (MainClass.posAttrib);
 			GL.BindBuffer (BufferTarget.ArrayBuffer, tex_buff_id);
 			GL.TexCoordPointer (2, TexCoordPointerType.Float, 0, 0);
-			
+			GL.VertexAttribPointer (MainClass.posAttrib, 2, VertexAttribPointerType.Float, false, 0, 0);
+
+			GL.Uniform1 (MainClass.textureUniform, tex_id);
+
 			GL.BindTexture (TextureTarget.Texture2D, tex_id);
 
 			GL.DrawArrays (PrimitiveType.Quads, 0, 4);
 
 			GL.DisableClientState (ArrayCap.VertexArray);
 			GL.DisableClientState (ArrayCap.TextureCoordArray);
+			GL.DisableVertexAttribArray (MainClass.posAttrib);
+			GL.DisableVertexAttribArray (MainClass.vertAttrib);
 		
 		}
 
@@ -121,6 +140,12 @@ namespace Core.Graphics
 			GL.BufferData (BufferTarget.ArrayBuffer, 
 				new IntPtr(verts.Length* 4),
 				verts, BufferUsageHint.StaticDraw);
+
+			GL.BindBuffer (BufferTarget.ArrayBuffer, tex_buff_id);
+			GL.BufferData (BufferTarget.ArrayBuffer, 
+				new IntPtr(tex_coords.Length* 4),
+				tex_coords, BufferUsageHint.StaticDraw);
+				
 		}
 
 		public override void Input ()

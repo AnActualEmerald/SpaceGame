@@ -15,7 +15,7 @@ namespace FileManager
 	/// </summary>
 	public class DataBit
 	{
-		public const String NULL_TYPE = "null"; // this is just an example member, replace it with your own struct members!
+		public const String NULL_TYPE = "null";
 		public const String NUM_TYPE = "num";
 		public const String TILE_TYPE = "tile";
 		public const String VERT_TYPE = "vert";
