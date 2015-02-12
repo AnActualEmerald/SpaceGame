@@ -172,8 +172,8 @@ namespace ShipBuild
 			Vertices v;
 			texture = init_mask (render_tiles, out v);
 			ship_mask = new RenderMask(this, "t", ResLoader.GetTextureId(texture));
-			ship_mask.init ();
 			ship_mask.SetVerts (v.GetAABB().Vertices);
+			ship_mask.init ();
 			AddComponent (ship_mask);
 			AddComponent(body);
 		}
@@ -188,7 +188,7 @@ namespace ShipBuild
 			i+=0.01f;
 
 			Matrix4 mod = m_scale * m_rot;
-			Matrix4 m = Matrix4.CreateOrthographic (world.GetHorRes (), world.GetVertRes (), -1, 1) * mod;
+			Matrix4 m = Matrix4.CreateOrthographic (world.GetHorRes (), world.GetVertRes (), -1, 1);
 			GL.UniformMatrix4 (MainClass.mod_matUniform, false, ref m);
 			GL.Uniform2 (MainClass.offSetUniform, offset);
 		}

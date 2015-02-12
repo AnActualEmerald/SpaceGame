@@ -10,13 +10,12 @@ namespace Core.Graphics
 	public class RenderMask : Component
 	{
 		protected int tex_id;
-		protected uint vbo_id;
-		protected uint tex_buff_id;
-		protected uint index_id;
 		protected RenderingEngine engine;
 		private String engine_s;
 		
 		private RenderMask _instance;
+		private int vao;
+		private int[] vbo;
 		private float[] verts = new float[]{
 			0.0f, 0.0f,
 			0.0f, 64.0f,
@@ -36,7 +35,7 @@ namespace Core.Graphics
 			this.parent = parent;
 			this.tex_id = tex_id;
 			engine_s = engine;
-			init_vbo ();
+			vbo = new int[2];
 		}
 
 		public int GetTextureId()
@@ -78,19 +77,28 @@ namespace Core.Graphics
 				 
 		}
 
-		protected void init_vbo()
+		public void init_vbo()
 		{
-			GL.GenBuffers (1, out vbo_id);
-			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo_id);
-			GL.BufferData (BufferTarget.ArrayBuffer, 
-			               new IntPtr(verts.Length * 8 * sizeof(float)),
-			               verts, BufferUsageHint.StaticDraw);
+			GL.GenVertexArrays (1, out vao);
+			GL.BindVertexArray (vao);
 
-			GL.GenBuffers (1, out tex_buff_id);
-			GL.BindBuffer (BufferTarget.ArrayBuffer, tex_buff_id);
+			GL.GenBuffers (2, vbo);
+			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo[0]);
+			GL.BufferData (BufferTarget.ArrayBuffer, 
+			               new IntPtr(verts.Length * 4),
+			               verts, BufferUsageHint.StaticDraw);
+			GL.EnableVertexAttribArray (MainClass.vertAttrib);
+			GL.VertexAttribPointer (MainClass.vertAttrib, 2, VertexAttribPointerType.Float, false, 0, 0);
+
+			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo[1]);
 			GL.BufferData (BufferTarget.ArrayBuffer,
-				new IntPtr (tex_coords.Length * 8 * sizeof(float)),
-				tex_coords, BufferUsageHint.StaticDraw);
+				new IntPtr (tex_coords.Length * 4),
+				tex_coords, BufferUsageHint.DynamicDraw);
+
+			GL.EnableVertexAttribArray (MainClass.posAttrib);
+			GL.VertexAttribPointer (MainClass.posAttrib, 2, VertexAttribPointerType.Float, false, 0, 0);
+
+			GL.BindVertexArray (0);
 		}
 
 		public override void Render()
@@ -103,48 +111,25 @@ namespace Core.Graphics
 			engine.MakeRequest(new RenderRequest(ref _instance));
 			
 		}
-		
+
+		int i = 0;
 		public void Draw()
 		{
-			GL.EnableClientState (ArrayCap.TextureCoordArray);
-			GL.EnableClientState(ArrayCap.VertexArray);   
+			GL.BindVertexArray (vao);       
 
-			GL.EnableVertexAttribArray (MainClass.vertAttrib);
-			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo_id);          
-			GL.VertexPointer(2, VertexPointerType.Float, 0, 0); 
-			GL.VertexAttribPointer (MainClass.vertAttrib, 2, VertexAttribPointerType.Float, false, 0, 0);
+			//GL.Uniform1 (MainClass.textureUniform, tex_id);
 
-			GL.EnableVertexAttribArray (MainClass.posAttrib);
-			GL.BindBuffer (BufferTarget.ArrayBuffer, tex_buff_id);
-			GL.TexCoordPointer (2, TexCoordPointerType.Float, 0, 0);
-			GL.VertexAttribPointer (MainClass.posAttrib, 2, VertexAttribPointerType.Float, false, 0, 0);
+			GL.DrawElementsBaseVertex(PrimitiveType.Quads, 8, DrawElementsType.UnsignedInt, ref i, 0);
 
-			GL.Uniform1 (MainClass.textureUniform, tex_id);
-
-			GL.BindTexture (TextureTarget.Texture2D, tex_id);
-
-			GL.DrawArrays (PrimitiveType.Quads, 0, 4);
-
-			GL.DisableClientState (ArrayCap.VertexArray);
-			GL.DisableClientState (ArrayCap.TextureCoordArray);
-			GL.DisableVertexAttribArray (MainClass.posAttrib);
-			GL.DisableVertexAttribArray (MainClass.vertAttrib);
-		
+			GL.BindVertexArray (0);
+				
 		}
 
 		public override void Update ()
 		{
-			_instance = this;
+			//_instance = this;
 
-			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo_id);
-			GL.BufferData (BufferTarget.ArrayBuffer, 
-				new IntPtr(verts.Length* 4),
-				verts, BufferUsageHint.StaticDraw);
 
-			GL.BindBuffer (BufferTarget.ArrayBuffer, tex_buff_id);
-			GL.BufferData (BufferTarget.ArrayBuffer, 
-				new IntPtr(tex_coords.Length* 4),
-				tex_coords, BufferUsageHint.StaticDraw);
 				
 		}
 
@@ -155,6 +140,8 @@ namespace Core.Graphics
 		
 		public override void init()
 		{
+			init_vbo ();
+
 			engine = parent.GetWorld().GetEngine(engine_s);
 			_instance = this;
 		}

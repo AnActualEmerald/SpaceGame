@@ -28,10 +28,12 @@ namespace Game
 		{
 			Ship s = new Ship ("mino", c);
 
-			c.root.AddChild (s);
-
 			shader.Post_init += shader_init;
 			c.root.AddComponent (shader);
+
+			c.root.AddChild (s);
+
+
 		}
 
 		private static void shader_init(Object sender)

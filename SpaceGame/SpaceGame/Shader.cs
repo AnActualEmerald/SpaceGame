@@ -127,7 +127,6 @@ namespace Core.Graphics
 
 		public override void Update ()
 		{
-
 		}
 	}
 }
