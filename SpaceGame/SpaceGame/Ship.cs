@@ -42,7 +42,8 @@ namespace ShipBuild
 		private string name;
 		private Matrix4 m_rot = Matrix4.CreateRotationZ(0);
 		private Matrix4 m_scale = Matrix4.CreateScale(1);
-		private OpenTK.Vector2 offset = new OpenTK.Vector2();
+		private Matrix4 m_trans = Matrix4.CreateTranslation (0, 0, 0);
+		private OpenTK.Vector2 center;
 
 
 		public Ship(String name, Core.CoreEngine world) : base(world.root, world)
@@ -142,15 +143,14 @@ namespace ShipBuild
 			return tb;
 		}
 
-		private void Rotate(float a)
+		private void Rotate(float a, OpenTK.Vector2 around)
 		{
 			m_rot = Matrix4.CreateRotationZ (a);
 		}
 
 		private void Translate(float off_x, float off_y)
 		{
-			offset.X += off_x;
-			offset.Y += off_y;
+			m_trans = Matrix4.CreateTranslation (off_x, off_y, 0);
 		}
 
 		private void Scale(float sx, float sy)
@@ -176,21 +176,22 @@ namespace ShipBuild
 			ship_mask.init ();
 			AddComponent (ship_mask);
 			AddComponent(body);
+
+			center = new OpenTK.Vector2 (v.GetCentroid ().X, v.GetCentroid ().Y);
 		}
 
 		float i = 0.0f;
 		public override void Update ()
 		{
 			base.Update ();
-			Rotate ((float)(i));
-			//Translate (0, 0);
-			//Scale (0.5f, 0.5f);
+			Rotate ((float)(i), center);
+			Translate (100, 0);
+			//Scale (0.5f * i, 0.5f * i);
 			i+=0.01f;
 
-			Matrix4 mod = m_scale * m_rot;
-			Matrix4 m = Matrix4.CreateOrthographic (world.GetHorRes (), world.GetVertRes (), -1, 1);
+			Matrix4 mod = m_scale * m_rot * m_trans;
+			Matrix4 m = mod * Matrix4.CreateOrthographic (world.GetHorRes (), world.GetVertRes (), -1, 1);
 			GL.UniformMatrix4 (MainClass.mod_matUniform, false, ref m);
-			GL.Uniform2 (MainClass.offSetUniform, offset);
 		}
 			
 	}

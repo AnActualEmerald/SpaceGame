@@ -16,11 +16,13 @@ namespace Core.Graphics
 		private RenderMask _instance;
 		private int vao;
 		private int[] vbo;
-		private float[] verts = new float[]{
-			0.0f, 0.0f,
-			0.0f, 64.0f,
-			64.0f, 64.0f,
-			64.0f, 0.0f };
+		private float[] verts = new float[] {
+			0.0f, 0.5f, 0,
+			0.0f, -0.5f, 0,
+			0.5f, -0.5f, 0,
+			0f, 0f, 0
+		};
+		//	0.5f, 0.0f, 0 };
 
 		private float[] tex_coords = new float[]{
 			0.0f, 0.0f, 
@@ -56,6 +58,7 @@ namespace Core.Graphics
 			List<float> f_c = new List<float> ();
 			for (int i = 0, maxLength = verts.ToArray().Length; i < maxLength; i++) {
 				Microsoft.Xna.Framework.Vector2 v = verts.ToArray()[i];
+				Console.WriteLine ("Here is vert to set: " + v);
 				f_v.Add(v.X);
 				if (v.X > 0)
 					f_c.Add (1);
@@ -66,6 +69,7 @@ namespace Core.Graphics
 					f_c.Add (1);
 				else
 					f_c.Add (0);
+				f_v.Add (0);
 
 			}
 			this.verts = f_v.ToArray();
@@ -83,20 +87,26 @@ namespace Core.Graphics
 			GL.BindVertexArray (vao);
 
 			GL.GenBuffers (2, vbo);
+
+			GL.EnableVertexAttribArray (MainClass.vertAttrib);
+
 			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo[0]);
 			GL.BufferData (BufferTarget.ArrayBuffer, 
-			               new IntPtr(verts.Length * 4),
+			               new IntPtr(verts.Length * 3),
 			               verts, BufferUsageHint.StaticDraw);
-			GL.EnableVertexAttribArray (MainClass.vertAttrib);
-			GL.VertexAttribPointer (MainClass.vertAttrib, 2, VertexAttribPointerType.Float, false, 0, 0);
+
+			GL.VertexAttribPointer (MainClass.vertAttrib, 3, VertexAttribPointerType.Float, false, 0, 0);
+
+			GL.EnableVertexAttribArray (MainClass.posAttrib);
 
 			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo[1]);
 			GL.BufferData (BufferTarget.ArrayBuffer,
-				new IntPtr (tex_coords.Length * 4),
+				new IntPtr (tex_coords.Length * 3),
 				tex_coords, BufferUsageHint.DynamicDraw);
 
-			GL.EnableVertexAttribArray (MainClass.posAttrib);
+
 			GL.VertexAttribPointer (MainClass.posAttrib, 2, VertexAttribPointerType.Float, false, 0, 0);
+
 
 			GL.BindVertexArray (0);
 		}
@@ -111,15 +121,14 @@ namespace Core.Graphics
 			engine.MakeRequest(new RenderRequest(ref _instance));
 			
 		}
-
-		int i = 0;
+			
 		public void Draw()
 		{
 			GL.BindVertexArray (vao);       
 
 			//GL.Uniform1 (MainClass.textureUniform, tex_id);
 
-			GL.DrawElementsBaseVertex(PrimitiveType.Quads, 8, DrawElementsType.UnsignedInt, ref i, 0);
+			GL.DrawArrays(PrimitiveType.Quads, 0, verts.Length * 8);
 
 			GL.BindVertexArray (0);
 				

@@ -111,9 +111,6 @@ namespace Core
 		void onResize (object sender, EventArgs e)
 		{
 			GL.Viewport (0, 0, display.Width, display.Height);
-			GL.MatrixMode (MatrixMode.Projection);
-			GL.LoadIdentity ();
-			GL.Ortho (0, display.Width, display.Height, 0, -1, 1);
 		}
 
         public virtual void SetClearColor(Color c)
@@ -128,10 +125,6 @@ namespace Core
 
 		private void init_view()
 		{
-			GL.MatrixMode (MatrixMode.Projection);
-			GL.LoadIdentity ();
-			GL.Ortho (0, display.Width, display.Height, 0, -1, 1);
-		    //GL.MatrixMode (MatrixMode.Modelview);
 
 		    GL.Enable (EnableCap.Texture2D);
 

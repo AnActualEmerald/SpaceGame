@@ -36,7 +36,7 @@ namespace ShipBuild
 		
 		public TileBasic(String name, Ship parent) : base(parent, parent.GetWorld())
 		{
-			this.name = name;
+			this._name = name;
 			this.parentShip = parent;
 			
 			try{
@@ -57,80 +57,8 @@ namespace ShipBuild
 			Console.WriteLine (name + " for ship " + parentShip.Name + " was loaded");
 		}
 
-		public Bitmap Texture {
-			get {
-				return texture;
-			}
-		}
-		
-		public virtual int data{
-			
-			get { return _data; }
-			set { _data = value; }
-		}
-		
-		public virtual String name{
-			get { return _name; }
-			set { _name = value; }
-		}
-
-		public virtual Vector2 pos {
-			get {
-				return inship_pos;
-			}
-			set {
-				inship_pos = value;
-			}
-		}
-
-		public virtual Shape shape {
-			get {
-				return _shape;
-			}
-			set {
-				_shape = value;
-			}
-		}
-
-		public Vertices verts {
-			get {
-				return _verts;
-			}
-			set {
-				_verts = value;
-			}
-		}
-
-		public void Rotate (double s)
-		{
-
-		//	Bitmap b = new Bitmap (64, 64);
-		//	System.Drawing.Graphics g = System.Drawing.Graphics.FromImage (b);
-		//	g.TranslateTransform((float)texture.Width / 2, (float)texture.Height / 2);
-		//	g.RotateTransform(s);
-		//	g.TranslateTransform(-(float)texture.Width / 2, -(float)texture.Height / 2);
-		//	g.DrawImage(texture, new Point(0, 0));
-
-		//	texture.Dispose ();
-		//	texture = b;
-
-		//	mask.SetTextureId (Files.ResLoader.GetTextureId (texture));
-
-			float xx;
-			float yy;
-			for(int i = 0; i < verts.Count; i++) {
-				Vector2 v = verts.ToArray () [i];
-				xx = (float)(v.X * Math.Cos (s) - v.Y * Math.Sin (s));
-				yy = (float)(v.X * Math.Sin (s) + v.Y * Math.Cos (s));
-				v.X = xx;
-				v.Y = yy;
-			}
-
-		}
-					
 		public override void Update()
 		{
-			mask.SetVerts (verts);	
 			base.Update ();
 		}
 		
@@ -153,5 +81,55 @@ namespace ShipBuild
 
 		}
 
+		public String name {
+			get {
+				return _name;
+			}
+			set {
+				_name = value;
+			}
+		}
+
+		public int data {
+			get {
+				return _data;
+			}
+			set {
+				_data = value;
+			}
+		}
+
+		public Shape shape {
+			get {
+				return _shape;
+			}
+			set {
+				_shape = value;
+			}
+		}
+
+		public Vertices verts {
+			get {
+				return _verts;
+			}
+			set {
+				_verts = value;
+			}
+		}
+
+		public Vector2 pos {
+			get {
+				return inship_pos;
+			}
+			set {
+				inship_pos = value;
+			}
+		}
+
+		public Bitmap Texture {
+			get {
+				return texture;
+			}
+		}
 	}
 }

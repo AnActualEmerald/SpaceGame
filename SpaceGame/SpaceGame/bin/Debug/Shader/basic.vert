@@ -4,12 +4,12 @@ uniform mat4 mod_mat;
 uniform vec2 offset;
 
 layout(location = 0)in vec2 pos;
-layout(location = 1)in vec2 vertex;
+layout(location = 1)in vec3 vertex;
 
 out vec2 tex_coord;
 
 void main()
 {
-	tex_coord = vertex;
-	gl_Position = vec4(vertex, 0.5, 1);
+	tex_coord = pos;
+	gl_Position = mod_mat * vec4(vertex,  1);
 }

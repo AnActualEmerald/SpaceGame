@@ -2,12 +2,12 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="RenderMask.cs">
     <Files>
-      <File FileName="RenderMask.cs" Line="1" Column="1" />
-      <File FileName="Ship.cs" Line="3" Column="3" />
-      <File FileName="Class1.cs" Line="33" Column="33" />
+      <File FileName="RenderMask.cs" Line="4" Column="4" />
+      <File FileName="Ship.cs" Line="1" Column="1" />
+      <File FileName="Class1.cs" Line="1" Column="1" />
       <File FileName="Shader.cs" Line="1" Column="1" />
       <File FileName="TileData.cs" Line="1" Column="1" />
-      <File FileName="Core.cs" Line="6" Column="6" />
+      <File FileName="Core.cs" Line="9" Column="9" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -29,6 +29,7 @@ namespace Game
 			Ship s = new Ship ("mino", c);
 
 			shader.Post_init += shader_init;
+			shader.init ();
 			c.root.AddComponent (shader);
 
 			c.root.AddChild (s);

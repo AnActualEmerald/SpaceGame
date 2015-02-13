@@ -99,9 +99,10 @@ namespace Core.Graphics
 			GL.DeleteShader (vert);
 			GL.DeleteShader (frag);
 
+			Post_init.Invoke (this);
+
 			Bind ();
 
-			Post_init.Invoke (this);
 		}
 
 		public int AddUniform(string name, int t = 0)
