@@ -9,7 +9,7 @@ namespace Game
     class MainClass
     {
 
-		private static CoreEngine c = new CoreEngine("HELLO WORLD", 60, 200);
+		private static CoreEngine c = new CoreEngine("HELLO WORLD", 60, 0);
 		private static Shader shader = new Shader ("./Shader/basic");
 
 		public static int mod_matUniform;
@@ -43,7 +43,6 @@ namespace Game
 			textureUniform = shader.AddUniform ("texture");
 			posAttrib = shader.AddAttribute ("pos");
 			vertAttrib = shader.AddAttribute ("vertex");
-			offSetUniform = shader.AddUniform("offset");
 		}
     }
 }

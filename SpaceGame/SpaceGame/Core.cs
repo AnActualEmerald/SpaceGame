@@ -125,11 +125,14 @@ namespace Core
 
 		private void init_view()
 		{
-
 		    GL.Enable (EnableCap.Texture2D);
 
 			GL.Enable (EnableCap.Blend);
 			GL.BlendFunc (BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
+			//GL.FrontFace (FrontFaceDirection.Cw);
+			GL.Enable (EnableCap.CullFace);
+			GL.CullFace (CullFaceMode.Back);
 
 		}
 		

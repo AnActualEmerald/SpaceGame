@@ -184,8 +184,8 @@ namespace ShipBuild
 		public override void Update ()
 		{
 			base.Update ();
-			Rotate ((float)(i), center);
-			Translate (100, 0);
+			//Rotate ((float)(i), center);
+			//Translate (0, 0);
 			//Scale (0.5f * i, 0.5f * i);
 			i+=0.01f;
 
