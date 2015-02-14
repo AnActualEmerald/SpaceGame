@@ -21,6 +21,7 @@ using FarseerPhysics.Collision;
 using Files;
 using OpenTK.Graphics.OpenGL;
 using OpenTK;
+using FarseerPhysics;
 
 namespace ShipBuild
 {
@@ -29,6 +30,8 @@ namespace ShipBuild
 	/// </summary>
 	public class Ship : GameObject
 	{
+		public static float RAD_TO_DEG = 57.2957795f;
+
 		private DataFile shipFile;
 		private List<TileData> tiles = new List<TileData>();
 		private List<TileBasic> render_tiles = new List<TileBasic>();
@@ -38,13 +41,13 @@ namespace ShipBuild
 		private Bitmap texture;
 
 		private int max_thrust;
-		private int ship_tex_id;
 		private string name;
 		private Matrix4 m_rot = Matrix4.CreateRotationZ(0);
 		private Matrix4 m_scale = Matrix4.CreateScale(1);
 		private Matrix4 m_trans = Matrix4.CreateTranslation (0, 0, 0);
 		private OpenTK.Vector2 center;
-
+		private OpenTK.Vector3 Position;
+		private float width, height;
 
 		public Ship(String name, Core.CoreEngine world) : base(world.root, world)
 		{
@@ -143,7 +146,7 @@ namespace ShipBuild
 			return tb;
 		}
 
-		private void Rotate(float a, OpenTK.Vector2 around)
+		private void Rotate(float a)
 		{
 			m_rot = Matrix4.CreateRotationZ (a);
 		}
@@ -165,29 +168,38 @@ namespace ShipBuild
 			body = new PhysicsBody(world.GetWorld(), 
 				new Microsoft.Xna.Framework.Vector2(0, 0), 
 				0, null, this);
-
+			body.body.BodyType = BodyType.Dynamic;
+			Vertices v = new Vertices();
 			foreach (TileBasic tb in render_tiles) {
-				FixtureFactory.AttachPolygon (tb.verts, 1, body.body);
+				Vertices vvv = new Vertices();
+				foreach (Microsoft.Xna.Framework.Vector2 vec in tb.verts) {
+					vvv.Add (new Microsoft.Xna.Framework.Vector2 (ConvertUnits.ToSimUnits (vec.X), ConvertUnits.ToSimUnits (vec.Y)));
+				}
+				v.AddRange (vvv);
 			}
-			Vertices v;
+			s_fixture = FixtureFactory.AttachPolygon (v, 1, body.body);
 			texture = init_mask (render_tiles, out v);
 			ship_mask = new RenderMask(this, "t", ResLoader.GetTextureId(texture));
 			ship_mask.SetVerts (v.GetAABB().Vertices);
 			ship_mask.init ();
 			AddComponent (ship_mask);
 			AddComponent(body);
-
+			width = v.GetAABB ().Width;
+			height = v.GetAABB ().Height;
 			center = new OpenTK.Vector2 (v.GetCentroid ().X, v.GetCentroid ().Y);
 		}
-
-		float i = 0.0f;
+			
 		public override void Update ()
 		{
 			base.Update ();
-			//Rotate ((float)(i), center);
-			//Translate (0, 0);
-			//Scale (0.5f * i, 0.5f * i);
-			i+=0.01f;
+			s_fixture.Body.Rotation = 100 / RAD_TO_DEG;
+			s_fixture.Body.ApplyForce (new Microsoft.Xna.Framework.Vector2 (0.5f, 0.5f));
+
+			Rotate (body.body.Rotation * RAD_TO_DEG);
+			Translate (ConvertUnits.ToDisplayUnits(body.body.Position.X), ConvertUnits.ToDisplayUnits(body.body.Position.Y));
+
+			m_rot = Matrix4.CreateTranslation (-Position) * Matrix4.CreateTranslation (-width / 2, -height / 2, 0)
+			* m_rot * Matrix4.CreateTranslation (width / 2, height / 2, 0) * Matrix4.CreateTranslation (Position);
 
 			Matrix4 mod = m_scale * m_rot * m_trans;
 			Matrix4 m = mod * Matrix4.CreateOrthographic (world.GetHorRes (), world.GetVertRes (), -1, 1);

@@ -1,13 +1,10 @@
 ﻿<Properties StartupItem="ShipBuild.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="RenderMask.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Ship.cs">
     <Files>
-      <File FileName="RenderMask.cs" Line="4" Column="4" />
-      <File FileName="Ship.cs" Line="1" Column="1" />
-      <File FileName="Class1.cs" Line="1" Column="1" />
-      <File FileName="Shader.cs" Line="1" Column="1" />
-      <File FileName="TileData.cs" Line="1" Column="1" />
-      <File FileName="Core.cs" Line="9" Column="9" />
+      <File FileName="Ship.cs" Line="42" Column="42" />
+      <File FileName="Class1.cs" Line="4" Column="4" />
+      <File FileName="Core.cs" Line="31" Column="31" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

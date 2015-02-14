@@ -137,7 +137,7 @@ namespace Core.Graphics
 
 			GL.BindBuffer (BufferTarget.ArrayBuffer, vbo[1]);
 			GL.BufferData (BufferTarget.ArrayBuffer,
-				new IntPtr (tex_coords.Length * 3),
+				new IntPtr (tex_coords.Length * 4),
 				tex_coords, BufferUsageHint.DynamicDraw);
 
 
@@ -146,6 +146,8 @@ namespace Core.Graphics
 			GL.BindBuffer (BufferTarget.ElementArrayBuffer, vbo [2]);
 			GL.BufferData (BufferTarget.ElementArrayBuffer, new IntPtr (index.Length * 2), index, BufferUsageHint.StaticDraw);
 
+			GL.BindTexture (TextureTarget.Texture2D ,tex_id);
+			GL.Uniform1 (MainClass.textureUniform, tex_id);
 
 			GL.BindVertexArray (0);
 		}
@@ -163,8 +165,6 @@ namespace Core.Graphics
 			
 		public void Draw()
 		{
-			GL.Uniform1 (MainClass.textureUniform, tex_id);
-
 			GL.BindVertexArray (vao);       
 	
 			GL.DrawElements(PrimitiveType.TriangleStrip, index.Length * 2, DrawElementsType.UnsignedInt, 0);

@@ -8,6 +8,7 @@ using System.Drawing;
 using Game;
 using Files;
 using Core.Graphics;
+using FarseerPhysics;
 
 
 namespace Core
@@ -45,10 +46,17 @@ namespace Core
             this.maxFrames = maxFrames;
             this.maxTicks = maxTicks;
 			root = new GameObject ();
-			p_world = new World(new Microsoft.Xna.Framework.Vector2(0, 0));
+			p_world = new World(new Microsoft.Xna.Framework.Vector2(0.5f, 0));
+			p_world.BodyAdded += OnAddBody;
+			p_world.ShiftOrigin(new Microsoft.Xna.Framework.Vector2(display.Width / 2, display.Height / 2));
 			errorLog = new StreamWriter("./error.err");
 			Console.SetError(errorLog);
         }
+
+		public static void OnAddBody(Body b)
+		{
+			Console.WriteLine ("did the thing");
+		}
 
 		public void loadRes(Object sender, EventArgs e)
         {
@@ -79,7 +87,9 @@ namespace Core
             timeNowTicks = GetTimeMillis(DateTime.Now);
 			//do updates here
 
+
 			root.Update ();
+			p_world.Step (1 / 6);
 
 			//end updates
             deltaTicks += timeNowTicks - lastTimeTicks;
@@ -125,7 +135,11 @@ namespace Core
 
 		private void init_view()
 		{
-		    GL.Enable (EnableCap.Texture2D);
+			//GL.MatrixMode (MatrixMode.Projection);
+			//GL.LoadIdentity ();
+			//GL.Ortho (0, display.Width, display.Height, 0, -1, 1);
+
+		  //  GL.Enable (EnableCap.Texture2D);
 
 			GL.Enable (EnableCap.Blend);
 			GL.BlendFunc (BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
@@ -134,6 +148,7 @@ namespace Core
 			GL.Enable (EnableCap.CullFace);
 			GL.CullFace (CullFaceMode.Back);
 
+			ConvertUnits.SetDisplayUnitToSimUnitRatio (64f);
 		}
 		
 		public World GetWorld()
