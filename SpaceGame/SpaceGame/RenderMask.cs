@@ -12,7 +12,11 @@ namespace Core.Graphics
 		protected int tex_id;
 		protected RenderingEngine engine;
 		private String engine_s;
-		
+
+		private Matrix4 m_rot = Matrix4.CreateRotationZ(0);
+		private Matrix4 m_scale = Matrix4.CreateScale(1);
+		private Matrix4 m_trans = Matrix4.CreateTranslation (0, 0, 0);
+
 		private RenderMask _instance;
 		private int vao;
 		private int[] vbo;
@@ -47,13 +51,24 @@ namespace Core.Graphics
 
 		public void SetTextureId(int id)
 		{
-
 			GL.DeleteTexture (tex_id);
 			this.tex_id = id;
 		}
 
-		public void SetVerts(Vertices verts)
+		public void SetVerts(Vertices verts, bool convertToDisplay = false)
 		{
+			if (convertToDisplay) {
+				Vertices vvvvvv = verts;
+				for(int i = 0; i < vvvvvv.Count; i++) {
+					Microsoft.Xna.Framework.Vector2 xx = vvvvvv.ToArray()[i];
+					Microsoft.Xna.Framework.Vector2 x = xx;
+					verts.Remove (xx);
+					x.X = FarseerPhysics.ConvertUnits.ToDisplayUnits (xx.X);
+					x.Y = FarseerPhysics.ConvertUnits.ToDisplayUnits (xx.Y);
+					verts.Add (x);
+				}
+			}
+
 			Microsoft.Xna.Framework.Vector2[] vv = new Microsoft.Xna.Framework.Vector2[4];
 			foreach(Microsoft.Xna.Framework.Vector2 h in verts)
 			{
@@ -165,6 +180,10 @@ namespace Core.Graphics
 			
 		public void Draw()
 		{
+			Matrix4 mod = m_scale * m_rot * m_trans;
+			Matrix4 m = mod * Matrix4.CreateOrthographic (parent.GetWorld().GetHorRes (), parent.GetWorld().GetVertRes (), -1, 1);
+			GL.UniformMatrix4 (MainClass.mod_matUniform, false, ref m);
+
 			GL.BindVertexArray (vao);       
 	
 			GL.DrawElements(PrimitiveType.TriangleStrip, index.Length * 2, DrawElementsType.UnsignedInt, 0);
@@ -196,26 +215,29 @@ namespace Core.Graphics
 			Console.WriteLine ("init done");
 		}
 
-	}
-
-	class VectorSorter : IComparer<Vector2>
-	{
-		#region IComparer implementation
-		public int Compare (Vector2 x, Vector2 y)
+		/// <summary>
+		/// Rotate the specified a, point and pos.
+		/// </summary>
+		/// <param name="a">The angle.</param>
+		/// <param name="point">The local point around which the mask rotates.</param>
+		/// <param name="pos">The current position of the mask to get back to the origin.</param>
+		public void Rotate(float a, Vector2 point, Vector3 pos)
 		{
-			if (x.Length > y.Length)
-				return (int)x.Length;
-				
-			return (int)y.Length;
+			m_rot = Matrix4.CreateRotationZ (a);
+			m_rot = Matrix4.CreateTranslation (-pos) * Matrix4.CreateTranslation (new Vector3 (-point.X, -point.Y, 0)) * m_rot
+			* Matrix4.CreateTranslation (new Vector3 (point.X, point.Y, 0)) * Matrix4.CreateTranslation (pos);
 		}
-		#endregion
-		//public override int Compare (Vector2 x, Vector2 y)
-		//{
-	//		if (x.Length > y.Length)
-//				return (int)x.Length;
-//
-//			return (int)y.Length;
-		//}
+
+		public void Translate(float off_x, float off_y)
+		{
+			m_trans = Matrix4.CreateTranslation (off_x, off_y, 0);
+		}
+
+		public void Scale(float sx, float sy)
+		{
+			m_scale = Matrix4.CreateScale(sx, sy, 1);
+		}
+
 	}
 }
 

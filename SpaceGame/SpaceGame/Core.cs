@@ -48,14 +48,15 @@ namespace Core
 			root = new GameObject ();
 			p_world = new World(new Microsoft.Xna.Framework.Vector2(0.5f, 0));
 			p_world.BodyAdded += OnAddBody;
-			p_world.ShiftOrigin(new Microsoft.Xna.Framework.Vector2(display.Width / 2, display.Height / 2));
+			ConvertUnits.SetDisplayUnitToSimUnitRatio (1f);
+			p_world.ShiftOrigin(new Microsoft.Xna.Framework.Vector2(ConvertUnits.ToSimUnits(display.Width / 2), ConvertUnits.ToSimUnits(display.Height / 2)));
 			errorLog = new StreamWriter("./error.err");
 			Console.SetError(errorLog);
         }
 
 		public static void OnAddBody(Body b)
 		{
-			Console.WriteLine ("did the thing");
+
 		}
 
 		public void loadRes(Object sender, EventArgs e)
@@ -147,8 +148,6 @@ namespace Core
 			//GL.FrontFace (FrontFaceDirection.Cw);
 			GL.Enable (EnableCap.CullFace);
 			GL.CullFace (CullFaceMode.Back);
-
-			ConvertUnits.SetDisplayUnitToSimUnitRatio (64f);
 		}
 		
 		public World GetWorld()
@@ -158,7 +157,7 @@ namespace Core
 		
 		public RenderingEngine GetEngine(String t)
 		{
-			if(t == "ui")
+			if(t.ToLower().Equals("ui"))
 				return UIEngine;
 			if(t.ToLower().Equals("t"))
 				return TileEngine;

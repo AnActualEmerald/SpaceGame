@@ -14,7 +14,9 @@ namespace Game
         protected GameObject parent;
 		protected bool is_root;
 		protected CoreEngine world;
-			
+
+		protected bool been_init = false;
+
 		public GameObject(GameObject parent, CoreEngine world)
         {
 			_init_lists();
@@ -102,7 +104,13 @@ namespace Game
         		g.init();
         	foreach(Component c in components)
         		c.init();
+
+			been_init = true;
         }
 
+		public bool BeenInit {
+			get{ return been_init;}
+			set{ been_init = value;}
+		}
     }
 }

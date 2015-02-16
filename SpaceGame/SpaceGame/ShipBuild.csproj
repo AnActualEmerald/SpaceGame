@@ -189,6 +189,7 @@
     <Compile Include="TileBasic.cs" />
     <Compile Include="TileData.cs" />
     <Compile Include="Shader.cs" />
+    <Compile Include="SceneManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

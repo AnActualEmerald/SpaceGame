@@ -3,6 +3,7 @@ using Core;
 using ShipBuild;
 using FileManager;
 using Core.Graphics;
+using GUI;
 
 namespace Game
 {
@@ -11,6 +12,8 @@ namespace Game
 
 		private static CoreEngine c = new CoreEngine("HELLO WORLD", 60, 0);
 		private static Shader shader = new Shader ("./Shader/basic");
+		private static SceneManager sc;
+
 
 		public static int mod_matUniform;
 		public static int textureUniform;
@@ -24,17 +27,29 @@ namespace Game
 			c.start ();
         }
 
+		//Scene 0 = menu
+		//Scene 1 = Main game
+		//Scene 2 = server connection
 		private static void load(object o)
 		{
+			sc = new SceneManager (c.root, c, 3);
+
+			GameObject scene1 = new GameObject (sc, c);
 			Ship s = new Ship ("mino", c);
+			scene1.AddChild (s);
+			sc.AddScene (scene1, 1);
+
+			GameObject scene0 = new GameObject (sc, c);
+			UIButton start = new UIButton (new Microsoft.Xna.Framework.Vector2(0, 0), 128, 64, "./res/buttons/start", scene0);
+			scene0.AddChild (start);
+			sc.AddScene (scene0, 0);
+
+			sc.SwitchToScene (0);
 
 			shader.Post_init += shader_init;
 			shader.init ();
 			c.root.AddComponent (shader);
-
-			c.root.AddChild (s);
-
-
+			c.root.AddChild (sc);
 		}
 
 		private static void shader_init(Object sender)
@@ -43,6 +58,11 @@ namespace Game
 			textureUniform = shader.AddUniform ("texture");
 			posAttrib = shader.AddAttribute ("pos");
 			vertAttrib = shader.AddAttribute ("vertex");
+		}
+
+		private static void ON_StartClick(Object sender)
+		{
+			sc.SwitchToScene (1);
 		}
     }
 }

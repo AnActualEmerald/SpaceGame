@@ -42,9 +42,6 @@ namespace ShipBuild
 
 		private int max_thrust;
 		private string name;
-		private Matrix4 m_rot = Matrix4.CreateRotationZ(0);
-		private Matrix4 m_scale = Matrix4.CreateScale(1);
-		private Matrix4 m_trans = Matrix4.CreateTranslation (0, 0, 0);
 		private OpenTK.Vector2 center;
 		private OpenTK.Vector3 Position;
 		private float width, height;
@@ -145,22 +142,7 @@ namespace ShipBuild
 			
 			return tb;
 		}
-
-		private void Rotate(float a)
-		{
-			m_rot = Matrix4.CreateRotationZ (a);
-		}
-
-		private void Translate(float off_x, float off_y)
-		{
-			m_trans = Matrix4.CreateTranslation (off_x, off_y, 0);
-		}
-
-		private void Scale(float sx, float sy)
-		{
-			m_scale = Matrix4.CreateScale(sx, sy, 1);
-		}
-			
+						
 		public override void init ()
 		{
 
@@ -188,22 +170,13 @@ namespace ShipBuild
 			height = v.GetAABB ().Height;
 			center = new OpenTK.Vector2 (v.GetCentroid ().X, v.GetCentroid ().Y);
 		}
-			
+
+		float i = 0;
 		public override void Update ()
 		{
 			base.Update ();
-			s_fixture.Body.Rotation = 100 / RAD_TO_DEG;
-			s_fixture.Body.ApplyForce (new Microsoft.Xna.Framework.Vector2 (0.5f, 0.5f));
-
-			Rotate (body.body.Rotation * RAD_TO_DEG);
-			Translate (ConvertUnits.ToDisplayUnits(body.body.Position.X), ConvertUnits.ToDisplayUnits(body.body.Position.Y));
-
-			m_rot = Matrix4.CreateTranslation (-Position) * Matrix4.CreateTranslation (-width / 2, -height / 2, 0)
-			* m_rot * Matrix4.CreateTranslation (width / 2, height / 2, 0) * Matrix4.CreateTranslation (Position);
-
-			Matrix4 mod = m_scale * m_rot * m_trans;
-			Matrix4 m = mod * Matrix4.CreateOrthographic (world.GetHorRes (), world.GetVertRes (), -1, 1);
-			GL.UniformMatrix4 (MainClass.mod_matUniform, false, ref m);
+			ship_mask.Rotate (i, new OpenTK.Vector2(width / 2, height / 2), Position);
+			i += 0.05f;
 		}
 			
 	}
