@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Net.Sockets;
 using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Common;
@@ -22,6 +23,8 @@ namespace ServerParts
 	/// </summary>
 	public class Client
 	{
+		public const int KEY_W = 0, KEY_A = 1, KEY_S = 2, KEY_D = 3, KEY_LSHIFT = 4;
+		
 		private Socket _socket;
 		private S_Point ship_pos;
 		private float ship_rot;
@@ -30,6 +33,10 @@ namespace ServerParts
 		private PolygonShape ship_shape;
 		private Body ship_body;
 		private S_Point[] ship_verts;
+		private byte[] b_buffer;
+		
+		
+		private bool[] keys = new bool[5];
 		
 		public Client(Socket socket, String name = null, S_Point ship_pos = null, float ship_rot = 0, Bitmap ship_tex = null)
 		{
@@ -48,9 +55,34 @@ namespace ServerParts
 			Vertices vs = new Vertices(v);
 			
 			ship_shape = new PolygonShape(vs, 1);
-		
+			ship_body.Rotation = ship_rot;
+			ship_body.Position = ship_pos.AsXNAVector();
 		}
 
+		public byte[] GetTextureBytes()
+		{
+			byte[] bb;
+			
+			List<byte> c = new List<byte>();
+			for(int x  = 0; x < Ship_texture.Width; x++)
+				for(int y = 0; y < Ship_texture.Height; y++)
+			{
+				c.Add((byte)Ship_texture.GetPixel(x,y).ToArgb());
+			}
+			
+			bb = c.ToArray();
+			return bb;
+		}
+
+		public bool GetKeyState(int index){
+			return keys[index];
+		}
+		
+		public void SetKeyState(int index, bool state)
+		{
+			keys[index] = state;
+		}
+		
 		public Socket socket {
 			get {
 				return _socket;
@@ -59,6 +91,16 @@ namespace ServerParts
 				_socket = value;
 			}
 		}
+
+		public byte[] B_buffer {
+			get {
+				return b_buffer;
+			}
+			set {
+				b_buffer = value;
+			}
+		}
+
 		public S_Point Ship_pos {
 			get {
 				return ship_pos;
@@ -69,10 +111,10 @@ namespace ServerParts
 		}
 		public float Ship_rot {
 			get {
-				return ship_rot;
+				return ship_body.Rotation;
 			}
 			set {
-				ship_rot = value;
+				ship_body.Rotation = value;
 			}
 		}
 		public Bitmap Ship_texture {
@@ -115,6 +157,13 @@ namespace ServerParts
 				ship_body = value;
 			}
 		}
+		
+		public override string ToString()
+		{
+			String res = "name:"+name+";pos:"+ship_pos.x+","+ship_pos.y+";rot:"+ship_rot+";";
+			return res;
+		}
+
 	}
 	
 	public class S_Point{

@@ -54,11 +54,22 @@ namespace Networking
 		private void finishConnect()
 		{
 			byte[] b = new byte[1024];
+			byte[] bb = new byte[1024];
 			String s = String.Empty;
+			String send;
 			do{
 				_socket.Receive(b, b.Length, SocketFlags.None);
 				
 				s = Encoding.ASCII.GetString(b);
+				
+				if(s.Equals("getpos"))
+				{
+					send = pos.X+";"+pos.Y;
+					_socket.Send(Encoding.ASCII.GetBytes(send), send.Length, SocketFlags.None);
+				}//this will be finished later
+				else{
+					Console.WriteLine("Asked for "+s);
+				}
 				
 			}while(s != "start");
 			

@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Net;
+using System.Threading;
+using SpaceGameSever;
 using Core;
+using Networking;
 using ShipBuild;
 using FileManager;
 using Core.Graphics;
@@ -11,9 +15,10 @@ namespace Game
     {
 
 		private static CoreEngine c = new CoreEngine("HELLO WORLD", 60, 0);
-		private static Shader shader = new Shader ("./Shader/basic");
+		private static Shader shader;
 		private static SceneManager sc;
-
+		private static Thread serverThread;
+		
 
 		public static int mod_matUniform;
 		public static int textureUniform;
@@ -22,16 +27,40 @@ namespace Game
 		public static int offSetUniform;
 
         public static void Main(String[] args)
-        {
-			c.load += load;
-			c.start ();
+        {        	
+        	foreach(string s in args)
+        		Console.WriteLine("Console Argument: " + s);
+			string version = OpenTK.Graphics.OpenGL.GL.GetString(OpenTK.Graphics.OpenGL.StringName.Version);
+			if(version.StartsWith("3") || version.StartsWith("4")){
+				Console.WriteLine("OpenGL ok with version: " + version);
+				shader = new Shader ("./Shader/basic");
+			}
+			else
+			{
+				Console.WriteLine("OpenGL not ok with version: "+ version);
+				Console.WriteLine("Loading alternate shader");
+				shader = new Shader("./Shader/old");
+				
+			}
+			
+			Server server_ = new Server();
+			serverThread = new Thread(new ThreadStart(server_.loop));
+			serverThread.Start();
+			
+			Client c = new Client(IPAddress.Loopback.ToString(), 25565);
+			c.Connect(5);
+			
+			
+			
+			//c.load += load;
+			//c.start ();
         }
 
 		//Scene 0 = menu
 		//Scene 1 = Main game
 		//Scene 2 = server connection
 		private static void load(object o)
-		{
+		{			
 			sc = new SceneManager (c.root, c, 3);
 
 			GameObject scene1 = new GameObject (sc, c);

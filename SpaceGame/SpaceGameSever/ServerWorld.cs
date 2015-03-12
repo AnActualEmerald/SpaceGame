@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework;
@@ -24,6 +25,7 @@ namespace SpaceGameSever
 		public ServerWorld(S_Point gravity)
 		{
 			physWorld = new World(new Vector2(gravity.x, gravity.y));
+			ConvertUnits.SetDisplayUnitToSimUnitRatio(32);
 		}
 		
 		public void step()
@@ -44,8 +46,9 @@ namespace SpaceGameSever
 		public void AddClient(Client c)
 		{
 			Body bod = BodyFactory.CreateBody(physWorld, c.Ship_pos.AsXNAVector(), c.Ship_rot, c.Name);
-			bod.CreateFixture(c.Ship_shape);
+			Fixture f = bod.CreateFixture(c.Ship_shape);
 			c.Ship_body = bod;
+			AddBody(bod);
 		}
 		
 		public void RemoveClient(Client c)
@@ -61,6 +64,16 @@ namespace SpaceGameSever
 		public bool Contains(Body b)
 		{
 			return physWorld.BodyList.Contains(b);
+		}
+		
+		public float ConvertToSim(float u)
+		{
+			return ConvertUnits.ToSimUnits(u);
+		}
+		
+		public float ConvertToDisplay(float u)
+		{
+			return ConvertUnits.ToDisplayUnits(u);
 		}
 		
 	}

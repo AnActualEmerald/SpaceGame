@@ -11,9 +11,11 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
+using Microsoft.Xna.Framework;
 using ServerParts;
 using System.Drawing;
 using System.Drawing.Imaging;
+using FarseerPhysics.Common;
 
 namespace SpaceGameSever
 {
@@ -32,15 +34,8 @@ namespace SpaceGameSever
 		public const int TEX_TYPE = 0x02;
 		public const int VERTS_TYPE = 0x03;
 		
-		private byte[] _buffer = new byte[2097152];
+		private byte[] _buffer = new byte[5120];
 		private ServerWorld _world = new ServerWorld(new S_Point(0, 0));
-		
-		public Server()
-		{
-			
-		}
-		
-		
 		
 		public void AcceptCall(IAsyncResult r)
 		{
@@ -49,10 +44,52 @@ namespace SpaceGameSever
 			GetClientInfo(s, c);
 			clients.Add(c);
 			
-			s.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ClientLoopRecieve), s);
+			s.BeginReceive(c.B_buffer, 0, c.B_buffer.Length, SocketFlags.None, new AsyncCallback(ClientLoopRecieve), s);
 			_serverSocket.BeginAccept(new AsyncCallback(AcceptCall), null);
 		}
 
+		public void InitClient(Client c)
+		{
+			String response;
+			
+			foreach(Client cc in clients)
+			{			
+				SendText("new_c", c.socket);
+				WaitForResponse("ready", c.socket);
+				SendText(cc.ToString(), c.socket);
+				WaitForResponse("got_c", c.socket);
+				SendText("next_texture", c.socket);
+				WaitForResponse("ready", c.socket);
+				SendBytes(cc.GetTextureBytes(), c.socket);
+				WaitForResponse("got_tex", c.socket);
+			}
+		}
+		
+		public void UpdateClients()
+		{
+			foreach(Client c in clients)
+				foreach(Client cc in clients)
+				{							
+					SendText(cc.ToString(), c.socket);
+				}	
+		}
+		
+		public String WaitForResponse(String res, Socket target)
+		{
+			byte[] buff = new byte[res.Length * sizeof(byte)];
+			target.Receive(buff);
+			String got = Encoding.ASCII.GetString(buff);
+			if(got.Contains(res))
+				return got;
+			
+			return null;
+		}
+		
+		public void SendBytes(byte[] data, Socket target)
+		{
+			target.BeginSend (data, 0, data.Length, SocketFlags.None, new AsyncCallback (ClientSendCall), target);
+		}
+		
 		public void GetClientInfo(Socket s, Client c)
 		{
 			SendText("getpos", s);
@@ -85,34 +122,53 @@ namespace SpaceGameSever
 		{
 			try{
 				Socket s = (Socket)r.AsyncState;
+				Client c = GetClientBySocket(s);
 				int i = s.EndReceive(r);
 				byte[] d = new byte[i];
-				Array.Copy(_buffer, d, i);
-				
-				Client c = GetClientBySocket(s);
+				Array.Copy(c.B_buffer, d, i);
 				
 				
-				s.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ClientLoopRecieve), s);
+				
+				s.BeginReceive(c.B_buffer, 0, c.B_buffer.Length, SocketFlags.None, new AsyncCallback(ClientLoopRecieve), s);
 			}catch(SocketException e){
 				Console.WriteLine("Client disconnect");
 			}
 		}
 		
-		public void ClientRecieve(IAsyncResult r)
+		public void ParseClientInput()
 		{
-			try{
-				Socket s = (Socket)r.AsyncState;
-				int i = s.EndReceive(r);
-				byte[] d = new byte[i];
-				Array.Copy(_buffer, d, i);
+			foreach(Client c in clients)
+			{
+				String[] s = Encoding.ASCII.GetString(c.B_buffer).Split(';');
+				String[] ss = s[0].Split(',');
+				foreach(String key in ss)
+				{
+					if(key.Equals("w"))
+						c.SetKeyState(Client.KEY_W, true);
+					if(key.Equals("a"))
+						c.SetKeyState(Client.KEY_A, true);
+					if(key.Equals("s"))
+						c.SetKeyState(Client.KEY_S, true);
+					if(key.Equals("d"))
+						c.SetKeyState(Client.KEY_D, true);
+					if(key.Equals("shift"))
+						c.SetKeyState(Client.KEY_LSHIFT, true);
+				}
 				
-				Client c = GetClientBySocket(s);
-				
-				Console.WriteLine(Encoding.ASCII.GetString(d));
-				
-				//s.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ClientLoopRecieve), s);
-			}catch(SocketException e){
-				Console.WriteLine("Client disconnect");
+				ss = s[1].Split(',');
+				foreach(String key in ss)
+				{
+					if(key.Equals("w"))
+						c.SetKeyState(Client.KEY_W, false);
+					if(key.Equals("a"))
+						c.SetKeyState(Client.KEY_A, false);
+					if(key.Equals("s"))
+						c.SetKeyState(Client.KEY_S, false);
+					if(key.Equals("d"))
+						c.SetKeyState(Client.KEY_D, false);
+					if(key.Equals("shift"))
+						c.SetKeyState(Client.KEY_LSHIFT, false);
+				}
 			}
 		}
 		
@@ -124,25 +180,41 @@ namespace SpaceGameSever
 		
 		public void loop()
 		{
+			//accept new clients in initialize them
+			_serverSocket.Bind();
+			_serverSocket.BeginAccept(new AsyncCallback(AcceptCall), null);
 			while(true)
 			{
-				//manage any connections
-				//update clients of new players
 				//take client intput
+				//handled in async clinet loop
 				//step physics 
-				_world.step();
+				Update();
 				//send results to clients
+				UpdateClients();
 				//???
-				//profit
-				foreach(Client c in clients)
-				{
-					SendText("ping", c.socket);
-					EndPoint p = c.socket.RemoteEndPoint;
-					_serverSocket.BeginReceiveFrom(_buffer, 0, _buffer.Length, SocketFlags.None,
-					                              ref p, new AsyncCallback(ClientLoopRecieve), _serverSocket);
-					
-				}
+				//profit		
 			}
+		}
+		
+		public void Update()
+		{
+			Vector2 force = new Vector2();
+			
+			foreach(Client c in clients)
+			{
+				if(c.GetKeyState(Client.KEY_W))
+					force.Y = -5;
+				if(c.GetKeyState(Client.KEY_A))
+					force.X = -5;
+				if(c.GetKeyState(Client.KEY_D))
+					force.X = 5;
+				if(c.GetKeyState(Client.KEY_S))
+					force.Y = 5;
+				
+				c.Ship_body.ApplyForce(ref force);
+			}
+			
+			_world.step();
 		}
 		
 		private static void SendText(string text, Socket target){
@@ -150,7 +222,7 @@ namespace SpaceGameSever
 			target.BeginSend (data, 0, data.Length, SocketFlags.None, new AsyncCallback (ClientSendCall), target);
 		}
 		
-		private static void ParseClientinfo(byte[] b, int type, out S_Point pos, out int rot, out Bitmap tex)
+		private void ParseClientinfo(byte[] b, int type, out S_Point pos, out int rot, out Bitmap tex)
 		{
 			String s = Encoding.ASCII.GetString(b);
 			String[] sa = s.Split(' ');
@@ -198,7 +270,7 @@ namespace SpaceGameSever
 			
 		}
 		
-		public static void ParseShipVerts(byte[] b, out S_Point[] verts)
+		public void ParseShipVerts(byte[] b, out S_Point[] verts)
 		{
 			String s = Encoding.ASCII.GetString(b);
 			String[] v = s.Split(';');
@@ -207,7 +279,7 @@ namespace SpaceGameSever
 			foreach(String vert in v)
 			{
 				String[] xy = vert.Split(':');
-				points.Add(new S_Point(float.Parse(xy[0]), float.Parse(xy[1])));
+				points.Add(new S_Point(_world.ConvertToSim(float.Parse(xy[0])), _world.ConvertToSim(float.Parse(xy[1]))));
 			}
 			
 			verts = points.ToArray();
