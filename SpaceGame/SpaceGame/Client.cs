@@ -30,6 +30,13 @@ namespace Networking
 			
 			_socket = new Socket(SocketType.Dgram, ProtocolType.Udp);
 			
+			
+		}
+		
+		public Client(long address, int port)
+		{
+			target = new IPEndPoint(address, port);
+			_socket = new Socket(SocketType.Dgram, ProtocolType.Udp);
 		}
 		
 		public void Connect(int attempts)

@@ -47,7 +47,7 @@ namespace Game
 			serverThread = new Thread(new ThreadStart(server_.loop));
 			serverThread.Start();
 			
-			Client c = new Client(IPAddress.Loopback.ToString(), 25565);
+			Client c = new Client(IPAddress.Loopback.Address, 25565);
 			c.Connect(5);
 			
 			
