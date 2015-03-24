@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client.cs" />
     <Compile Include="FarseerPhys\Collision\Collision.cs" />
     <Compile Include="FarseerPhys\Collision\Distance.cs" />
     <Compile Include="FarseerPhys\Collision\DynamicTree.cs" />
