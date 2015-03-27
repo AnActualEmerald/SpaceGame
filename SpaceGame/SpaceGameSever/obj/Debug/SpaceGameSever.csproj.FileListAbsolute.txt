@@ -10,3 +10,5 @@ C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\SpaceG
 C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGameSever\obj\Debug\SpaceGameSever.csprojResolveAssemblyReference.cache
 C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGameSever\obj\Debug\SpaceGameSever.exe
 C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGameSever\obj\Debug\SpaceGameSever.pdb
+C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\ShipBuildUtils.dll
+C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\ShipBuildUtils.pdb

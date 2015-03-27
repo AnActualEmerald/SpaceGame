@@ -129,7 +129,7 @@ namespace Core
             GL.ClearColor(c);
         }
         
-        private long GetTimeMillis(DateTime time)
+        public static long GetTimeMillis(DateTime time)
         {
             return time.Ticks / TimeSpan.TicksPerMillisecond;
         }

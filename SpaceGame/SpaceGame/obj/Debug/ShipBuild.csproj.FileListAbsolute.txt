@@ -36,3 +36,5 @@ C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGame\bin\Debug\SpaceGameLa
 C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGame\bin\Debug\SpaceGameSever.exe
 C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGame\bin\Debug\SpaceGameLauncher.pdb
 C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGame\bin\Debug\SpaceGameSever.pdb
+C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuildUtils.dll
+C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuildUtils.pdb

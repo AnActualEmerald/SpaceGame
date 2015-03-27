@@ -44,11 +44,11 @@ namespace Game
 			}
 			
 			Server server_ = new Server();
-			serverThread = new Thread(new ThreadStart(server_.loop));
+			serverThread = new Thread(new ThreadStart(server_.Start));
 			serverThread.Start();
 			
-			Client c = new Client(IPAddress.Loopback.Address, 25565);
-			c.Connect(5);
+			NetworkObj c = new NetworkObj(IPAddress.Loopback.Address, 25566, 25565);
+			c.Connect();
 			
 			
 			

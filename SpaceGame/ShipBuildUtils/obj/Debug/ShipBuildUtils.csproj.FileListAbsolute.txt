@@ -1,0 +1,5 @@
+C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\ShipBuildUtils\bin\Debug\ShipBuildUtils.dll
+C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\ShipBuildUtils\bin\Debug\ShipBuildUtils.pdb
+C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\ShipBuildUtils\obj\Debug\ShipBuildUtils.csprojResolveAssemblyReference.cache
+C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\ShipBuildUtils\obj\Debug\ShipBuildUtils.dll
+C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\ShipBuildUtils\obj\Debug\ShipBuildUtils.pdb

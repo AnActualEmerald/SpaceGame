@@ -20,6 +20,9 @@ namespace SpaceGameSever
 	{
 		string name;
 		IPEndPoint remoteEP;
+		Vector2 pos;
+		byte[] tex_data;
+		Vertices verts;
 		
 		/// <summary>
 		/// Creates Client object but does not initialize all the variables
@@ -31,7 +34,7 @@ namespace SpaceGameSever
 			this.name = name;
 			this.remoteEP = remoteEP;
 		}
-
+		
 		#region properties
 		
 		/// <summary>
@@ -57,17 +60,47 @@ namespace SpaceGameSever
 				remoteEP = value;
 			}
 		}
-		
+
+		public Vector2 Pos {
+			get {
+				return pos;
+			}
+			set {
+				pos = value;
+			}
+		}
+
+		public byte[] Tex_data {
+			get {
+				return tex_data;
+			}
+			set {
+				tex_data = value;
+			}
+		}
+
+		public Vertices Verts {
+			get {
+				return verts;
+			}
+			set {
+				verts = value;
+			}
+		}
 		#endregion
 		
 		#region methods
+		
 		/// <summary>
 		/// Initializes client object and returns that object for use. Does modify original object
 		/// </summary>
 		/// <returns>Copy of initialized client object</returns>
 		public Client Init(byte[] texture_data, Vertices verts, Vector2 pos)
 		{
-			
+			this.tex_data = texture_data;
+			this.verts = verts;
+			this.pos = pos;
+			return this;
 		}
 		
 		#endregion

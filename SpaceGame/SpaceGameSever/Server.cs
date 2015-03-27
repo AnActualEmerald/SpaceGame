@@ -9,8 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using Util;
 using FarseerPhysics.Common;
 using Microsoft.Xna.Framework;
+using SpaceGameSever.Udp;
+using System.Net;
 
 namespace SpaceGameSever
 {
@@ -20,8 +24,8 @@ namespace SpaceGameSever
 	public class Server
 	{
 		#region private members
-		private UdpListener _server;
-		private UdpListener _connecter;
+		private UdpListner _server;
+		private UdpListner _connecter;
 		private Thread connect_thread;
 		private bool running = false;
 		private Vector2 spawn_pos;
@@ -36,46 +40,79 @@ namespace SpaceGameSever
 		public Server(bool toStart = false)
 		{
 			//TODO finish constructor implementation
-			_server = new UdpListener();
-			_connecter = new UdpListener();
-			connect_thread = new Thread(new ThreadStart(CheckForConn, 0));
+			_server = new UdpListner(IPAddress.Any, 25565);
+			_connecter = new UdpListner(IPAddress.Loopback, 25566);
+			connect_thread = new Thread(new ThreadStart(CheckForConn));
 			if(toStart)
 				Start();
 		}
 		
 		public void Start()
 		{
+			Console.WriteLine("Server starting...");
 			running = true;
 			connect_thread.Start();
+			long lastTime = Utilities.GetTimeMillis(DateTime.Now);
+			long timeNow;
+			float delta = 0.0f;
+			int tps = 0;
+			long epsilon = Utilities.GetTimeMillis(DateTime.Now);
+			long update_now;
 			while(running)
 			{
+				timeNow = Utilities.GetTimeMillis(DateTime.Now);
+				delta += timeNow - lastTime;
+				lastTime = timeNow;
 				//get info from clients(input, misc)
-				//step physics
-				//update clients
+				update_now = Utilities.GetTimeMillis(DateTime.Now);
+				
+				while(epsilon < update_now){
+					Input();
+					//step physics
+					//update clients
+					Update();
+					epsilon+=1000/60;
+					tps++;
+					
+				}
+				
+				if(delta >= 1000)
+				{
+					Console.WriteLine("TPS: "+tps);
+					tps = 0;
+					delta = 0;
+				}
 			}
 		}
 		
 		private async void CheckForConn()
 		{
+			Console.WriteLine("Connection thread started succesfully");
 			while(running){
-				Recieved r = await _connecter.ListenAsync();
-				Client c = new Client(r.Sender, r.message);
-				InitClient(ref c);
-				clients.Add(c);
+				Packet r = await _connecter.ListenAsync();
+				Console.WriteLine("SS: packet received");
+				Client c = new Client(r.sender, r.message);
+				InitClient(c);
 			}
 		}
 		
-		private async void InitClient(ref Client c)
+		/// <summary>
+		/// Will initialize and add client to server
+		/// </summary>
+		/// <param name="c">The client object that needs to be initialized</param>
+		private async void InitClient(Client c)
 		{
 			byte[] tex;
 			Vertices verts;
-			await _connecter.SendAsync(c.RemoteEP, "sendtex");
-			Recieved r = await _connecter.ListenToAsync();
+			await _connecter.Send("sendtex", c.RemoteEP);
+			Packet r = await _connecter.ListenTo(c.RemoteEP);
 			tex = Encoding.ASCII.GetBytes(r.message);
-			await _connecter.SendAsync(c.RemoteEP, "sendverts");
-			r = await _connecter.ListenToAsync();
+			await _connecter.Send("sendverts", c.RemoteEP);
+			r = await _connecter.ListenTo(c.RemoteEP);
 			verts = ParseClientVerts(r.message);
+			await _connecter.Send("start", c.RemoteEP);
 			c.Init(tex, verts, spawn_pos);
+			clients.Add(c);
 		}
 		
 		private Vertices ParseClientVerts(String vertstring)
@@ -94,13 +131,27 @@ namespace SpaceGameSever
 		private void Input()
 		{
 			//TODO async?
-			//send request for input
-			//recieve and handle response
+			foreach(Client c in clients)
+			{
+				_server.BeginSend("sendinput", c.RemoteEP, new AsyncCallback(SendCall));	
+				_server.BeginListenTo(c.RemoteEP, new AsyncCallback(InputCall));
+			}
 		}
 		
 		private void Update()
 		{
 			
+		}
+		
+		private void SendCall(IAsyncResult r)
+		{
+			_server.EndSend(r);
+		}
+		
+		private void InputCall(IAsyncResult r)
+		{
+			IPEndPoint remoteEP = r.AsyncState as IPEndPoint;
+			Packet rec = _server.EndListenTo(r);
 		}
 	}
 }

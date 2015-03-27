@@ -171,6 +171,7 @@
     <Compile Include="FarseerPhys\Settings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
+    <Compile Include="ServerStarter.cs" />
     <Compile Include="UdpListener.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +185,12 @@
     <Folder Include="FarseerPhys\Common\Decomposition\CDT" />
     <Folder Include="FarseerPhys\Common\Decomposition\CDT\Delaunay" />
     <Folder Include="FarseerPhys\Dynamics" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShipBuildUtils\ShipBuildUtils.csproj">
+      <Project>{119C2950-3F73-419A-9665-4F066AB2C919}</Project>
+      <Name>ShipBuildUtils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

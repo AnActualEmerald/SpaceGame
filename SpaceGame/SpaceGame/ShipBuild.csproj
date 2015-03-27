@@ -69,7 +69,7 @@
     <Compile Include="TextEngine.cs" />
     <Compile Include="UIButton.cs" />
     <Compile Include="Class1.cs" />
-    <Compile Include="Client.cs" />
+    <Compile Include="NetworkObj.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="DataBit.cs" />
@@ -218,6 +218,10 @@
     <Folder Include="FarseerPhys\Dynamics\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ShipBuildUtils\ShipBuildUtils.csproj">
+      <Project>{119C2950-3F73-419A-9665-4F066AB2C919}</Project>
+      <Name>ShipBuildUtils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SpaceGameLauncher\SpaceGameLauncher.csproj">
       <Project>{3AA93CC3-A57D-4AF5-97B6-196850E18270}</Project>
       <Name>SpaceGameLauncher</Name>

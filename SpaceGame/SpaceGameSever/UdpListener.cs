@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SpaceGameSever
+namespace SpaceGameSever.Udp
 {
 
 	/// <summary>
@@ -24,10 +24,10 @@ namespace SpaceGameSever
 		IPEndPoint listen_to;
 		byte[] buff;
 
-		public UdpListner (IPEndPoint target, int port)
+		public UdpListner (IPAddress target, int port)
 		{
-			client = new UdpClient (port);
-			listen_to = target;
+			client = new UdpClient (new IPEndPoint(target, port));
+			listen_to = new IPEndPoint(target, port);
 		}
 
 		public UdpListner(int port)
@@ -64,12 +64,22 @@ namespace SpaceGameSever
 
 		public Packet EndListenTo(IAsyncResult r)
 		{
-			byte[] rec = client.EndReceive (r, ref (IPEndPoint)r.AsyncState);
+			byte[] rec = client.EndReceive (r, ref listen_to);
 			return new Packet () {
 				sender = (IPEndPoint)r.AsyncState,
 				message = Encoding.ASCII.GetString (rec)
 			};
 
+		}
+		
+		public async Task<Packet> ListenTo(IPEndPoint remoteEP)
+		{
+			byte[] rec = client.Receive(ref remoteEP);
+			return new Packet()
+			{
+				sender = remoteEP,
+				message = Encoding.ASCII.GetString(rec)
+			};
 		}
 			
 		public void BeginSend(string message, IPEndPoint target, AsyncCallback callback)
@@ -83,21 +93,21 @@ namespace SpaceGameSever
 			return client.EndSend (r);
 		}
 
-		public void Send(string message, IPEndPoint target)
+		public async Task<int> Send(string message, IPEndPoint target)
 		{
 			byte[] send = Encoding.ASCII.GetBytes (message);
-			client.Send (send, send.Length, target);
+			return client.Send (send, send.Length, target);
 		}
 
-		public void Send(Packet p)
+		public async Task<int> Send(Packet p)
 		{
 			byte[] send = Encoding.ASCII.GetBytes (p.message);
-			client.Send (send, send.Length, p.sender);
+			return client.Send (send, send.Length, p.sender);
 		}
 
 		private void ListenToCall(IAsyncResult r)
 		{
-			byte[] rec = client.EndReceive (r, ref (IPEndPoint)r.AsyncState);
+			byte[] rec = client.EndReceive (r, ref listen_to);
 		}
 
 	}
