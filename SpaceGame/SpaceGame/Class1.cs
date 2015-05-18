@@ -8,6 +8,7 @@ using ShipBuild;
 using FileManager;
 using Core.Graphics;
 using GUI;
+using System.Text;
 
 namespace Game
 {
@@ -43,17 +44,19 @@ namespace Game
 				
 			}
 			
-			Server server_ = new Server();
-			serverThread = new Thread(new ThreadStart(server_.Start));
-			serverThread.Start();
+			//Server server_ = new Server();
+			//serverThread = new Thread(new ThreadStart(server_.Start));
+			//serverThread.Start();
 			
-			NetworkObj c = new NetworkObj(IPAddress.Loopback.Address, 25566, 25565);
-			c.Connect();
+			System.Diagnostics.Process.Start("C:/Users/kgauthier16/Desktop/SpaceGame/SpaceGame/SpaceGameSever/bin/Debug/spacegamesever.exe");
 			
+			NetworkObj c_obj = new NetworkObj(IPAddress.Parse("10.1.13.42").Address, 25566, 25565);
+			c_obj.Connect();
 			
+			Console.ReadLine();
 			
-			//c.load += load;
-			//c.start ();
+		//	c.load += load;
+		//	c.start ();
         }
 
 		//Scene 0 = menu

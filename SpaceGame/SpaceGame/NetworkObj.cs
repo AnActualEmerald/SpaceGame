@@ -30,43 +30,47 @@ namespace Networking
 	 	public NetworkObj(String IPTarget, int conn_port, int main_port)
 		{
 			target = new IPEndPoint(new IPAddress(Encoding.ASCII.GetBytes(IPTarget)), main_port);
-			conn = new IPEndPoint(new IPAddress(Encoding.ASCII.GetBytes(IPTarget)), conn_port);
-			cl = new UdpListner(conn.Address, conn_port);
+			conn = new IPEndPoint(IPAddress.Parse(IPTarget), conn_port);
+			cl = new UdpListner(conn.Address, conn_port, true);
 		}
 	 	
 	 	public NetworkObj(long IPTarget, int conn_port, int main_port)
 		{
-			target = new IPEndPoint(new IPAddress(IPTarget), main_port);
+	 		
+			//target = new IPEndPoint(new IPAddress(IPTarget), main_port);
 			conn = new IPEndPoint(new IPAddress(IPTarget), conn_port);
-			cl = new UdpListner(conn.Address, conn.Port);
+			Console.WriteLine("OBJ INFO: " + conn.Address + ":" + conn.Port);
+	 		Console.ReadLine();
+			cl = new UdpListner(conn.Address, conn.Port, true);
 		}
 		
 	 	public void Connect()
 	 	{
 	 		Console.WriteLine("Connecting to server");
 	 		cl.Send("Burrito119", conn);
-	 		//Console.WriteLine("Listening for respopnse");
-	 		//cl.BeginListenTo(new IPEndPoint(IPAddress.Any, 25566), new AsyncCallback(finishConnect));
+	 		Console.WriteLine("Listening for respopnse");
+	 		finishConnect();
 		}
 		
-		private void finishConnect(IAsyncResult r)
+		private async void finishConnect()
 		{
-			Packet p = cl.EndListenTo(r);
-			Console.WriteLine("Got response from server: " + p.message);
-			if(p.message == "sendtex"){
-				Console.WriteLine("CS: Sending texture to server");
-				cl.Send(Encoding.ASCII.GetString(new byte[]{0, 5, 24, 33, 1, 69, 3, 2, 9, 5}), conn);
+			while(true){
+				Packet p = await cl.ListenTo(conn);
+				Console.WriteLine("Got response from server: " + p.message);
+				if(p.message == "sendtex"){
+					Console.WriteLine("CS: Sending texture to server");
+					cl.Send(Encoding.ASCII.GetString(new byte[]{0, 5, 24, 33, 1, 69, 3, 2, 9, 5}), conn);
+				}
+				if(p.message == "sendverts"){
+					Console.WriteLine("CS: Sending verts to server");
+					cl.Send("0,0;4,5;6,6;1,3", conn);
+				}
+				if(p.message == "start")
+				{
+					Console.WriteLine("Starting actual things");
+					return;
+				}
 			}
-			if(p.message == "sendverts"){
-				Console.WriteLine("CS: Sending verts to server");
-				cl.Send("0,0;4,5;6,6;1,3", conn);
-			}
-			if(p.message == "start")
-			{
-				Console.WriteLine("Starting actual things");
-				return;
-			}
-			cl.BeginListenTo(conn, finishConnect);
 		}
 		
 		private Object ParseSeverRequest(String s)

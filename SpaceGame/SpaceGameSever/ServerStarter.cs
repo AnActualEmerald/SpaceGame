@@ -20,7 +20,7 @@ namespace SpaceGameSever
 		
 		public static void Main(String[] args)
 		{
-			new Server().Start(
+			new Server().Start();
 		}
 	}
 }

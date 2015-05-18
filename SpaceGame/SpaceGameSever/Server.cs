@@ -40,8 +40,8 @@ namespace SpaceGameSever
 		public Server(bool toStart = false)
 		{
 			//TODO finish constructor implementation
-			_server = new UdpListner(IPAddress.Any, 25565);
-			_connecter = new UdpListner(IPAddress.Loopback, 25566);
+			_server = new UdpListner(IPAddress.Any, 25565, false);
+			_connecter = new UdpListner(IPAddress.Any, 25566, false);
 			connect_thread = new Thread(new ThreadStart(CheckForConn));
 			if(toStart)
 				Start();
@@ -89,6 +89,7 @@ namespace SpaceGameSever
 		{
 			Console.WriteLine("Connection thread started succesfully");
 			while(running){
+				Console.WriteLine("Listening for packet...");
 				Packet r = await _connecter.ListenAsync();
 				Console.WriteLine("SS: packet received");
 				Client c = new Client(r.sender, r.message);
@@ -134,7 +135,7 @@ namespace SpaceGameSever
 			foreach(Client c in clients)
 			{
 				_server.BeginSend("sendinput", c.RemoteEP, new AsyncCallback(SendCall));	
-				_server.BeginListenTo(c.RemoteEP, new AsyncCallback(InputCall));
+				_server.BeginListenTo(new AsyncCallback(InputCall));
 			}
 		}
 		

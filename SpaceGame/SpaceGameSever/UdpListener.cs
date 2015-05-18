@@ -24,10 +24,12 @@ namespace SpaceGameSever.Udp
 		IPEndPoint listen_to;
 		byte[] buff;
 
-		public UdpListner (IPAddress target, int port)
+		public UdpListner (IPAddress target, int port, bool isLocal)
 		{
-			client = new UdpClient (new IPEndPoint(target, port));
+			client = isLocal ? new UdpClient (new IPEndPoint(IPAddress.Loopback, port)) : new UdpClient (new IPEndPoint(IPAddress.Any, port));
 			listen_to = new IPEndPoint(target, port);
+			client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+			//client.Client.Bind(listen_to);
 		}
 
 		public UdpListner(int port)
@@ -42,12 +44,6 @@ namespace SpaceGameSever.Udp
 			result = buff;
 		}
 
-		public void Listen(IPEndPoint target, out byte[] result)
-		{
-			buff = client.Receive (ref target);
-			result = buff;
-		}
-
 		public async Task<Packet> ListenAsync()
 		{
 			var res = await client.ReceiveAsync ();
@@ -57,9 +53,11 @@ namespace SpaceGameSever.Udp
 			};
 		}
 
-		public void BeginListenTo(IPEndPoint remoteEP, AsyncCallback callback)
+		public void BeginListenTo(AsyncCallback callback, IPEndPoint ep = null)
 		{
-			client.BeginReceive (callback, remoteEP);
+			//client.Client.
+			//client.Client.Bind(ep == null ? listen_to : ep);
+			client.BeginReceive (callback, null);
 		}
 
 		public Packet EndListenTo(IAsyncResult r)
@@ -72,12 +70,12 @@ namespace SpaceGameSever.Udp
 
 		}
 		
-		public async Task<Packet> ListenTo(IPEndPoint remoteEP)
+		public async Task<Packet> ListenTo(IPEndPoint ep)
 		{
-			byte[] rec = client.Receive(ref remoteEP);
+			byte[] rec = client.Receive(ref ep);
 			return new Packet()
 			{
-				sender = remoteEP,
+				sender = ep,
 				message = Encoding.ASCII.GetString(rec)
 			};
 		}
@@ -110,6 +108,13 @@ namespace SpaceGameSever.Udp
 			byte[] rec = client.EndReceive (r, ref listen_to);
 		}
 
+		public void ChangeListenOn(IPEndPoint ep)
+		{
+			listen_to = ep;
+			client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+			client.Client.Bind(listen_to);
+		}
+		
 	}
 
 	public struct Packet
