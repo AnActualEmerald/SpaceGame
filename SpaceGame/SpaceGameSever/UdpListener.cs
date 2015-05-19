@@ -28,8 +28,6 @@ namespace SpaceGameSever.Udp
 		{
 			client = isLocal ? new UdpClient (new IPEndPoint(IPAddress.Loopback, port)) : new UdpClient (new IPEndPoint(IPAddress.Any, port));
 			listen_to = new IPEndPoint(target, port);
-			client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-			//client.Client.Bind(listen_to);
 		}
 
 		public UdpListner(int port)
@@ -37,89 +35,44 @@ namespace SpaceGameSever.Udp
 			client = new UdpClient (port);
 			listen_to = null;
 		}
-
-		public void Listen(out byte[] result)
+		
+		public void Send(Packet p)
 		{
-			buff = client.Receive (ref listen_to);
-			result = buff;
-		}
-
-		public async Task<Packet> ListenAsync()
-		{
-			var res = await client.ReceiveAsync ();
-			return new Packet () {
-				sender = res.RemoteEndPoint,
-				message = Encoding.ASCII.GetString(res.Buffer)
-			};
-		}
-
-		public void BeginListenTo(AsyncCallback callback, IPEndPoint ep = null)
-		{
-			//client.Client.
-			//client.Client.Bind(ep == null ? listen_to : ep);
-			client.BeginReceive (callback, null);
-		}
-
-		public Packet EndListenTo(IAsyncResult r)
-		{
-			byte[] rec = client.EndReceive (r, ref listen_to);
-			return new Packet () {
-				sender = (IPEndPoint)r.AsyncState,
-				message = Encoding.ASCII.GetString (rec)
-			};
-
+			byte[] buff = Encoding.ASCII.GetBytes(p.message);
+			client.BeginSend(buff, buff.Length, p.endpoint, new AsyncCallback(SendCall), client);
 		}
 		
-		public async Task<Packet> ListenTo(IPEndPoint ep)
+		public void Send(string msg, IPEndPoint ep)
 		{
-			byte[] rec = client.Receive(ref ep);
-			return new Packet()
-			{
-				sender = ep,
-				message = Encoding.ASCII.GetString(rec)
+			byte[] buff = Encoding.ASCII.GetBytes(msg);
+			client.BeginSend(buff, buff.Length, ep, new AsyncCallback(SendCall), client);
+		}
+
+		public async Packet Listen()
+		{
+			var rec = await client.ReceiveAsync();
+			return new Packet(){
+				endpoint = rec.RemoteEndPoint,
+				message = Encoding.ASCII.GetString(rec.Buffer)
 			};
 		}
-			
-		public void BeginSend(string message, IPEndPoint target, AsyncCallback callback)
+		
+		#region callbacks
+		
+		private void SendCall(IAsyncResult r)
 		{
-			byte[] mes = Encoding.ASCII.GetBytes (message);
-			client.BeginSend (mes, mes.Length, target, callback, null);
+			UdpClient client = (UdpClient)r.AsyncState;
+			client.EndSend(r);
 		}
-
-		public int EndSend(IAsyncResult r)
-		{
-			return client.EndSend (r);
-		}
-
-		public async Task<int> Send(string message, IPEndPoint target)
-		{
-			byte[] send = Encoding.ASCII.GetBytes (message);
-			return client.Send (send, send.Length, target);
-		}
-
-		public async Task<int> Send(Packet p)
-		{
-			byte[] send = Encoding.ASCII.GetBytes (p.message);
-			return client.Send (send, send.Length, p.sender);
-		}
-
-		private void ListenToCall(IAsyncResult r)
-		{
-			byte[] rec = client.EndReceive (r, ref listen_to);
-		}
-
-		public void ChangeListenOn(IPEndPoint ep)
-		{
-			listen_to = ep;
-			client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-			client.Client.Bind(listen_to);
-		}
+				
+		#endregion
+		
 		
 	}
 
 	public struct Packet
 	{
-		public IPEndPoint sender;
+		public IPEndPoint endpoint;
 		public String message;
 	}
 }

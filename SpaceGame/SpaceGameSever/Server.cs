@@ -92,7 +92,7 @@ namespace SpaceGameSever
 				Console.WriteLine("Listening for packet...");
 				Packet r = await _connecter.ListenAsync();
 				Console.WriteLine("SS: packet received");
-				Client c = new Client(r.sender, r.message);
+				Client c = new Client(r.endpoint, r.message);
 				InitClient(c);
 			}
 		}

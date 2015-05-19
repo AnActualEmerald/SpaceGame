@@ -8,6 +8,7 @@
 using System;
 using System.Net.Sockets;
 using System.Net;
+using System.Text;
 using FarseerPhysics.Common;
 using Microsoft.Xna.Framework;
 
@@ -24,6 +25,8 @@ namespace SpaceGameSever
 		byte[] tex_data;
 		Vertices verts;
 		
+		UdpClient cl_sock;
+		
 		/// <summary>
 		/// Creates Client object but does not initialize all the variables
 		/// </summary>
@@ -33,7 +36,16 @@ namespace SpaceGameSever
 		{
 			this.name = name;
 			this.remoteEP = remoteEP;
+			cl_sock = new UdpClient(remoteEP);
 		}
+		
+		#region network methods
+		
+		public void Send(String s)
+		{
+		}
+		
+		#endregion
 		
 		#region properties
 		
