@@ -23,31 +23,34 @@ namespace Networking
 	{
 	 	IPEndPoint target;
 	 	IPEndPoint conn;
-	 	UdpListner cl;
+	 	UdpClient cl;
 		
 	 	private Vector2 pos;
 	 	
-	 	public NetworkObj(String IPTarget, int conn_port, int main_port)
+	 	public NetworkObj(String IPTarget, int main_port)
 		{
-			target = new IPEndPoint(new IPAddress(Encoding.ASCII.GetBytes(IPTarget)), main_port);
-			conn = new IPEndPoint(IPAddress.Parse(IPTarget), conn_port);
-			cl = new UdpListner(conn.Address, conn_port, true);
+	 		target = new IPEndPoint(IPAddress.Parse(IPTarget), main_port);
+			cl = new UdpClient();
 		}
 	 	
-	 	public NetworkObj(long IPTarget, int conn_port, int main_port)
+	 	public NetworkObj(long IPTarget, int main_port)
 		{
 	 		
-			//target = new IPEndPoint(new IPAddress(IPTarget), main_port);
-			conn = new IPEndPoint(new IPAddress(IPTarget), conn_port);
-			Console.WriteLine("OBJ INFO: " + conn.Address + ":" + conn.Port);
-	 		Console.ReadLine();
-			cl = new UdpListner(conn.Address, conn.Port, true);
+			target = new IPEndPoint(new IPAddress(IPTarget), main_port);
+			cl = new UdpClient();
 		}
+	 	
+	 	public NetworkObj(bool local)
+	 	{
+	 		target = new IPEndPoint(IPAddress.Loopback, 28889);
+	 		cl = new UdpClient();
+	 	}
 		
 	 	public void Connect()
 	 	{
 	 		Console.WriteLine("Connecting to server");
-	 		cl.Send("Burrito119", conn);
+	 		cl.Connect(target);
+	 		cl.SendAsync(Encoding.ASCII.GetBytes("Burrito119"), 10);
 	 		Console.WriteLine("Listening for respopnse");
 	 		finishConnect();
 		}
@@ -55,40 +58,47 @@ namespace Networking
 		private async void finishConnect()
 		{
 			while(true){
-				Packet p = await cl.ListenTo(conn);
-				Console.WriteLine("Got response from server: " + p.message);
-				if(p.message == "sendtex"){
+				UdpReceiveResult p = await cl.ReceiveAsync();
+				String msg = Encoding.ASCII.GetString(p.Buffer);
+				Console.WriteLine("Got response from server: " + msg);
+				if(msg == "sendtex"){
 					Console.WriteLine("CS: Sending texture to server");
-					cl.Send(Encoding.ASCII.GetString(new byte[]{0, 5, 24, 33, 1, 69, 3, 2, 9, 5}), conn);
+					byte[] buff = new byte[]{0, 5, 24, 33, 1, 69, 3, 2, 9, 5};
+					cl.Send(buff, buff.Length);
 				}
-				if(p.message == "sendverts"){
+				if(msg == "sendverts"){
 					Console.WriteLine("CS: Sending verts to server");
-					cl.Send("0,0;4,5;6,6;1,3", conn);
+					byte[] buff = Encoding.ASCII.GetBytes("0,0;4,5;6,6;1,3");
+					cl.Send(buff, buff.Length);
 				}
-				if(p.message == "start")
+				if(msg == "start")
 				{
 					Console.WriteLine("Starting actual things");
+					loop();
 					return;
 				}
 			}
 		}
 		
-		private Object ParseSeverRequest(String s)
+		private Object ParseSeverRequest(byte[] b)
 		{
-			if(s == "getpos")
-				Console.WriteLine("Sadly, this isn't done yet");
-			
+			string s = Encoding.ASCII.GetString(b);
+			Console.WriteLine("Got: "+ s);
+			if(s == "sendinput"){
+				byte[] buff = Encoding.ASCII.GetBytes("W_DOWN;S_UP;A_DOWN");
+				cl.Send(buff, buff.Length);
+			}
 			return null;
 				
 		}
 		
-		private void loop()
+		private async void loop()
 		{
-			byte[] b = new byte[2048];
 			
 			while(true)
 			{
-				
+				UdpReceiveResult r = await cl.ReceiveAsync();
+				ParseSeverRequest(r.Buffer);
 			}
 			
 			

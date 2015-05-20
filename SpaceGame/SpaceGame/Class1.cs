@@ -50,7 +50,7 @@ namespace Game
 			
 			System.Diagnostics.Process.Start("C:/Users/kgauthier16/Desktop/SpaceGame/SpaceGame/SpaceGameSever/bin/Debug/spacegamesever.exe");
 			
-			NetworkObj c_obj = new NetworkObj(IPAddress.Parse("10.1.13.42").Address, 25566, 25565);
+			NetworkObj c_obj = new NetworkObj(true);
 			c_obj.Connect();
 			
 			Console.ReadLine();

@@ -40,8 +40,7 @@ namespace SpaceGameSever
 		public Server(bool toStart = false)
 		{
 			//TODO finish constructor implementation
-			_server = new UdpListner(IPAddress.Any, 25565, false);
-			_connecter = new UdpListner(IPAddress.Any, 25566, false);
+			_server = new UdpListner(IPAddress.Any, 28889, false);
 			connect_thread = new Thread(new ThreadStart(CheckForConn));
 			if(toStart)
 				Start();
@@ -51,13 +50,13 @@ namespace SpaceGameSever
 		{
 			Console.WriteLine("Server starting...");
 			running = true;
-			connect_thread.Start();
 			long lastTime = Utilities.GetTimeMillis(DateTime.Now);
 			long timeNow;
 			float delta = 0.0f;
 			int tps = 0;
 			long epsilon = Utilities.GetTimeMillis(DateTime.Now);
 			long update_now;
+			connect_thread.Start();
 			while(running)
 			{
 				timeNow = Utilities.GetTimeMillis(DateTime.Now);
@@ -73,7 +72,6 @@ namespace SpaceGameSever
 					Update();
 					epsilon+=1000/60;
 					tps++;
-					
 				}
 				
 				if(delta >= 1000)
@@ -88,13 +86,11 @@ namespace SpaceGameSever
 		private async void CheckForConn()
 		{
 			Console.WriteLine("Connection thread started succesfully");
-			while(running){
 				Console.WriteLine("Listening for packet...");
-				Packet r = await _connecter.ListenAsync();
+				Packet r = await _server.Listen();
 				Console.WriteLine("SS: packet received");
 				Client c = new Client(r.endpoint, r.message);
 				InitClient(c);
-			}
 		}
 		
 		/// <summary>
@@ -105,15 +101,24 @@ namespace SpaceGameSever
 		{
 			byte[] tex;
 			Vertices verts;
-			await _connecter.Send("sendtex", c.RemoteEP);
-			Packet r = await _connecter.ListenTo(c.RemoteEP);
+			_server.Send("sendtex", c.RemoteEP);
+			Packet r = await _server.ListenTo(c.RemoteEP);
 			tex = Encoding.ASCII.GetBytes(r.message);
-			await _connecter.Send("sendverts", c.RemoteEP);
-			r = await _connecter.ListenTo(c.RemoteEP);
+			_server.Send("sendverts", c.RemoteEP);
+			r = await _server.ListenTo(c.RemoteEP);
 			verts = ParseClientVerts(r.message);
-			await _connecter.Send("start", c.RemoteEP);
+			_server.Send("start", c.RemoteEP);
 			c.Init(tex, verts, spawn_pos);
 			clients.Add(c);
+		}
+		
+		private async Task<Packet> GetPacketFrom(IPEndPoint ep)
+		{	
+			do{
+				Packet p = await _server.Listen();
+				if(p.endpoint == ep)
+					return p;
+			}while(true);
 		}
 		
 		private Vertices ParseClientVerts(String vertstring)
@@ -131,28 +136,68 @@ namespace SpaceGameSever
 		
 		private void Input()
 		{
-			//TODO async?
+			
 			foreach(Client c in clients)
 			{
-				_server.BeginSend("sendinput", c.RemoteEP, new AsyncCallback(SendCall));	
-				_server.BeginListenTo(new AsyncCallback(InputCall));
+				_server.Send("sendinput", c.RemoteEP);	
+				Packet p = _server.ListenToSync(c.RemoteEP);
+				ProcessClientInput(p, c);
+			}
+		}
+		
+		private void ProcessClientInput(Packet p, Client c)
+		{
+			String[] msg = p.message.Split(';');
+			for(int i = 0; i < msg.Length; i++)
+			{
+				switch (msg[i]) {
+					case "W_DOWN":
+						c.input[(int)Inputs.W] = true;
+						continue;
+					case "W_UP":
+						c.input[(int)Inputs.W] = false;
+						continue;
+					case "A_DOWN":
+						c.input[(int)Inputs.A] = true;
+						continue;
+					case "A_UP":
+						c.input[(int)Inputs.A] = false;
+						continue;
+					case "S_DOWN":
+						c.input[(int)Inputs.S] = true;
+						continue;
+					case "S_UP":
+						c.input[(int)Inputs.S] = false;
+						continue;
+					case "D_DOWN":
+						c.input[(int)Inputs.D] = true;
+						continue;
+					case "D_UP":
+						c.input[(int)Inputs.D] = false;
+						continue;
+					case "L_SHIFT_DOWN":
+						c.input[(int)Inputs.L_SHIFT] = true;
+						continue;
+					case "L_SHIFT_UP":
+						c.input[(int)Inputs.L_SHIFT] = false;
+						continue;
+					case "SPACE_DOWN":
+						c.input[(int)Inputs.SPACE] = true;
+						continue;
+					case "SPACE_UP":
+						c.input[(int)Inputs.SPACE] = false;
+						continue;
+					default:
+						Console.WriteLine("Unkown input");
+						break;
+				}
 			}
 		}
 		
 		private void Update()
 		{
-			
 		}
 		
-		private void SendCall(IAsyncResult r)
-		{
-			_server.EndSend(r);
-		}
-		
-		private void InputCall(IAsyncResult r)
-		{
-			IPEndPoint remoteEP = r.AsyncState as IPEndPoint;
-			Packet rec = _server.EndListenTo(r);
-		}
+
 	}
 }

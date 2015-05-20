@@ -36,6 +36,7 @@ namespace SpaceGameSever.Udp
 			listen_to = null;
 		}
 		
+		
 		public void Send(Packet p)
 		{
 			byte[] buff = Encoding.ASCII.GetBytes(p.message);
@@ -48,12 +49,30 @@ namespace SpaceGameSever.Udp
 			client.BeginSend(buff, buff.Length, ep, new AsyncCallback(SendCall), client);
 		}
 
-		public async Packet Listen()
+		public async Task<Packet> Listen()
 		{
 			var rec = await client.ReceiveAsync();
-			return new Packet(){
+			return new Packet{
 				endpoint = rec.RemoteEndPoint,
 				message = Encoding.ASCII.GetString(rec.Buffer)
+			};
+		}
+		
+		public async Task<Packet> ListenTo(IPEndPoint ep)
+		{
+			byte[] rec = client.Receive(ref ep);
+			return new Packet{
+				endpoint = ep,
+				message = Encoding.ASCII.GetString(rec)
+			};
+		}
+		
+		public Packet ListenToSync(IPEndPoint ep)
+		{
+			byte[] rec = client.Receive(ref ep);
+			return new Packet{
+				endpoint = ep,
+				message = Encoding.ASCII.GetString(rec)
 			};
 		}
 		

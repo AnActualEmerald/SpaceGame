@@ -24,8 +24,7 @@ namespace SpaceGameSever
 		Vector2 pos;
 		byte[] tex_data;
 		Vertices verts;
-		
-		UdpClient cl_sock;
+		public bool[] input = new bool[6];
 		
 		/// <summary>
 		/// Creates Client object but does not initialize all the variables
@@ -36,17 +35,8 @@ namespace SpaceGameSever
 		{
 			this.name = name;
 			this.remoteEP = remoteEP;
-			cl_sock = new UdpClient(remoteEP);
 		}
-		
-		#region network methods
-		
-		public void Send(String s)
-		{
-		}
-		
-		#endregion
-		
+				
 		#region properties
 		
 		/// <summary>
@@ -117,5 +107,15 @@ namespace SpaceGameSever
 		
 		#endregion
 		
+	}
+	
+	public enum Inputs
+	{
+		W = 0,
+		A = 1,
+		S = 2,
+		D = 3,
+		L_SHIFT = 4,
+		SPACE = 5
 	}
 }
