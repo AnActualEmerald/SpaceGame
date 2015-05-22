@@ -110,6 +110,21 @@ namespace SpaceGameSever
 			_server.Send("start", c.RemoteEP);
 			c.Init(tex, verts, spawn_pos);
 			clients.Add(c);
+			SendClientToAll(c);
+		}
+		
+		private void SendClientToAll(Client c)
+		{
+			Packet n_clinet = new Packet{
+				endpoint = c.RemoteEP,
+				message = "newclient;pos:"+c.Pos.X +","+c.Pos.Y+";"+"tex:"+c.Tex_data 
+			};
+			
+			foreach(Client cc in clients)
+			{
+				n_clinet.endpoint = cc.RemoteEP;
+				_server.Send(n_clinet);
+			}
 		}
 		
 		private async Task<Packet> GetPacketFrom(IPEndPoint ep)
