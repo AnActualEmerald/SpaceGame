@@ -2,14 +2,15 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectGuid>{C2916F63-A487-4C22-89B9-88C3E232CE60}</ProjectGuid>
-    <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Exe</OutputType>
     <RootNamespace>SpaceGameSever</RootNamespace>
     <AssemblyName>SpaceGameSever</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -29,6 +30,12 @@
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp">
@@ -178,13 +185,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="FarseerPhys" />
-    <Folder Include="FarseerPhys\Collision" />
-    <Folder Include="FarseerPhys\Common" />
-    <Folder Include="FarseerPhys\Common\Decomposition" />
-    <Folder Include="FarseerPhys\Common\Decomposition\CDT" />
-    <Folder Include="FarseerPhys\Common\Decomposition\CDT\Delaunay" />
-    <Folder Include="FarseerPhys\Dynamics" />
+    <Folder Include="FarseerPhys\" />
+    <Folder Include="FarseerPhys\Common\" />
+    <Folder Include="FarseerPhys\Common\Decomposition\" />
+    <Folder Include="FarseerPhys\Common\Decomposition\CDT\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShipBuildUtils\ShipBuildUtils.csproj">

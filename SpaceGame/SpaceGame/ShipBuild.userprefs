@@ -1,8 +1,11 @@
 ﻿<Properties StartupItem="ShipBuild.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="..\SpaceGameSever\UdpListener.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="NetworkObj.cs">
     <Files>
-      <File FileName="..\SpaceGameSever\UdpListener.cs" Line="1" Column="1" />
+      <File FileName="../SpaceGameSever/Server.cs" Line="1" Column="1" />
+      <File FileName="../SpaceGameSever/UdpListener.cs" Line="55" Column="22" />
+      <File FileName="Class1.cs" Line="4" Column="16" />
+      <File FileName="NetworkObj.cs" Line="59" Column="8" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

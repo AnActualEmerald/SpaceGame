@@ -30,7 +30,7 @@ namespace Networking
 	 	UdpClient cl;
 		
 	 	
-	 	protected List<ClientObj> clients = new List<?>();
+	 	protected List<ClientObj> clients = new List<ClientObj>();
 	 	private Vector2 pos;
 	 	
 	 	public NetworkObj(String IPTarget, int main_port)
@@ -69,8 +69,7 @@ namespace Networking
 				Console.WriteLine("Got response from server: " + msg);
 				if(msg == "sendtex"){
 					Console.WriteLine("CS: Sending texture to server");
-					byte[] tex = ResLoader.loadTextureFile();
-					byte[] buff = new byte[]{0, 5, 24, 33, 1, 69, 3, 2, 9, 5};
+					byte[] tex = ResLoader.loadTextureFile("./res/tiles/l_hull.png");
 					cl.Send(tex, tex.Length);
 				}
 				if(msg == "sendverts"){
@@ -101,11 +100,11 @@ namespace Networking
 				if(!cl_parts[1].StartsWith("name"))
 				{
 					Console.Error.WriteLine("Invalid Server Packet");
-					Environment.Exit(-54);
+					Environment.Exit(-55);
 				}
 				string name = cl_parts[1].Split(':')[1];
 				string pos = cl_parts[2].Split(':')[1];
-				string tex = cl_parts[3].Split(':')[1];
+			//	string tex = cl_parts[3].Split(':')[1];
 				Console.WriteLine("Added client " + name + "with pos " + pos);
 				
 			}
