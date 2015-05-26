@@ -110,14 +110,18 @@ namespace SpaceGameSever
 			_server.Send("start", c.RemoteEP);
 			c.Init(tex, verts, spawn_pos);
 			clients.Add(c);
-			SendClientToAll(c);
+			SendClientToAll(c, true);
 		}
 		
-		private void SendClientToAll(Client c)
+		private void SendClientToAll(Client c, bool client_new = false)
 		{
+			
+			string clstring = client_new ? "newclient" : "update";
 			Packet n_clinet = new Packet{
 				endpoint = c.RemoteEP,
-				message = "newclient;pos:"+c.Pos.X +","+c.Pos.Y+";"+"tex:"+c.Tex_data 
+				message = clstring+";name:" + c.Name
+					+";pos:"+c.Pos.X +","
+					+c.Pos.Y
 			};
 			
 			foreach(Client cc in clients)
@@ -211,6 +215,12 @@ namespace SpaceGameSever
 		
 		private void Update()
 		{
+			//step physics
+			
+			
+			//update clients
+			foreach(Client c in clients)
+				SendClientToAll(c);
 		}
 		
 

@@ -10,21 +10,27 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using SpaceGameSever.Udp;
 using Util;
+using Core.Graphics;
+using Files;
+using Game;
 
 namespace Networking
 {
 	/// <summary>
 	/// Description of Client.
 	/// </summary>
-	public class NetworkObj
+	public class NetworkObj: Game.GameObject
 	{
 	 	IPEndPoint target;
 	 	IPEndPoint conn;
 	 	UdpClient cl;
 		
+	 	
+	 	protected List<ClientObj> clients = new List<?>();
 	 	private Vector2 pos;
 	 	
 	 	public NetworkObj(String IPTarget, int main_port)
@@ -63,8 +69,9 @@ namespace Networking
 				Console.WriteLine("Got response from server: " + msg);
 				if(msg == "sendtex"){
 					Console.WriteLine("CS: Sending texture to server");
+					byte[] tex = ResLoader.loadTextureFile();
 					byte[] buff = new byte[]{0, 5, 24, 33, 1, 69, 3, 2, 9, 5};
-					cl.Send(buff, buff.Length);
+					cl.Send(tex, tex.Length);
 				}
 				if(msg == "sendverts"){
 					Console.WriteLine("CS: Sending verts to server");
@@ -88,6 +95,32 @@ namespace Networking
 				byte[] buff = Encoding.ASCII.GetBytes("W_DOWN;S_UP;A_DOWN");
 				cl.Send(buff, buff.Length);
 			}
+			if(s.ToLower().StartsWith("newclient"))
+			{
+				string[] cl_parts = s.Split(';');
+				if(!cl_parts[1].StartsWith("name"))
+				{
+					Console.Error.WriteLine("Invalid Server Packet");
+					Environment.Exit(-54);
+				}
+				string name = cl_parts[1].Split(':')[1];
+				string pos = cl_parts[2].Split(':')[1];
+				string tex = cl_parts[3].Split(':')[1];
+				Console.WriteLine("Added client " + name + "with pos " + pos);
+				
+			}
+			if(s.ToLower().StartsWith("update"))
+			{
+				string[] cl_parts = s.Split(';');
+				if(!cl_parts[1].StartsWith("name"))
+				{
+					Console.Error.WriteLine("Invalid Server Packet");
+					Environment.Exit(-54);
+				}
+				string name = cl_parts[1].Split(':')[1];
+				string pos = cl_parts[2].Split(':')[1];
+				Console.WriteLine("Updated client " + name + "with pos " + pos);
+			}
 			return null;
 				
 		}
@@ -104,10 +137,37 @@ namespace Networking
 			
 		}
 		
+	}
+	
+	public class ClientObj:GameObject
+	{
+		private string name;
+		private Vector2 pos;
 		
-		private void parse(byte[] bytes)
+		public ClientObj(string name, Vector2 position, GameObject parent):base(parent, parent.GetWorld())
 		{
-			
+			this.name = name;
+			this.pos = position;
+		}
+
+		public string Name {
+			get {
+				return name;
+			}
+			set {
+				name = value;
+			}
+		}
+		
+		public static ClientObj CreateClientObj(string name, Vector2 pos, byte[] texture, GameObject parent)
+		{
+			ResLoader.WriteTempFile(name+"_texture.png", texture);
+			ClientObj co = new ClientObj(name, pos, parent);
+			RenderMask msk = new RenderMask(co, "t", 
+			                                ResLoader.GetTextureId(
+			                                	ResLoader.LoadImage("./temp/"+name+"_texture.png")));
+			co.AddComponent(msk);
+			return co;
 		}
 	}
 }
