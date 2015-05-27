@@ -117,11 +117,12 @@ namespace SpaceGameSever
 		{
 			
 			string clstring = client_new ? "newclient" : "update";
+			string tex = client_new ? ";tex:" +Encoding.ASCII.GetString(c.Tex_data) : "";
 			Packet n_clinet = new Packet{
 				endpoint = c.RemoteEP,
 				message = clstring+";name:" + c.Name
 					+";pos:"+c.Pos.X +","
-					+c.Pos.Y
+					+c.Pos.Y + tex
 			};
 			
 			foreach(Client cc in clients)

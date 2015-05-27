@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -89,7 +90,7 @@ namespace Networking
 		private Object ParseSeverRequest(byte[] b)
 		{
 			string s = Encoding.ASCII.GetString(b);
-			Console.WriteLine("Got: "+ s);
+			//Console.WriteLine("Got: "+ s);
 			if(s == "sendinput"){
 				byte[] buff = Encoding.ASCII.GetBytes("W_DOWN;S_UP;A_DOWN");
 				cl.Send(buff, buff.Length);
@@ -104,8 +105,10 @@ namespace Networking
 				}
 				string name = cl_parts[1].Split(':')[1];
 				string pos = cl_parts[2].Split(':')[1];
-			//	string tex = cl_parts[3].Split(':')[1];
+				string tex = cl_parts[3].Split(':')[1];
 				Console.WriteLine("Added client " + name + "with pos " + pos);
+				
+				clients.Add(ClientObj.CreateClientObj(name, ClientObj.ParseVerts(pos),Encoding.ASCII.GetBytes(tex), this));
 				
 			}
 			if(s.ToLower().StartsWith("update"))
@@ -160,13 +163,34 @@ namespace Networking
 		
 		public static ClientObj CreateClientObj(string name, Vector2 pos, byte[] texture, GameObject parent)
 		{
-			ResLoader.WriteTempFile(name+"_texture.png", texture);
-			ClientObj co = new ClientObj(name, pos, parent);
+			ClientObj co = null;
+			foreach(byte b in texture)
+				Console.Write(b);
+			Console.WriteLine();
+			Console.ReadLine();
+			MemoryStream tex = new MemoryStream(texture);
+			Console.WriteLine(tex.CanSeek);
+			try{
+			co = new ClientObj(name, pos, parent);
 			RenderMask msk = new RenderMask(co, "t", 
-			                                ResLoader.GetTextureId(
-			                                	ResLoader.LoadImage("./temp/"+name+"_texture.png")));
+			                                ResLoader.GetTextureId(new System.Drawing.Bitmap(tex, true)
+			                                	));
 			co.AddComponent(msk);
+			}
+			catch(Exception c)
+			{
+				Console.Error.WriteLine(c.Message);
+				Console.Error.WriteLine(c.StackTrace);
+				Console.Error.Close();
+				Environment.Exit(-90);
+			}
 			return co;
+		}
+		
+		public static Vector2 ParseVerts(String verts)
+		{
+			string[] v = verts.Split(',');
+			return new Vector2(float.Parse(v[0]), float.Parse(v[1]));
 		}
 	}
 }

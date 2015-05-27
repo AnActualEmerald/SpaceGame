@@ -18,8 +18,12 @@ namespace Files
 		}
 		
 		public static void WriteTempFile(string filename, byte[] contents)
-		{
-			FileStream fs = new FileStream("./temp/" + filename, FileMode.OpenOrCreate);
+		{				
+			DirectoryInfo di = new DirectoryInfo("./temp");
+			
+			if(!di.Exists)
+				di.Create();
+			FileStream fs = File.Create("./temp/"+filename);
 			fs.Flush();
 			fs.Write(contents, 0, contents.Length);
 			fs.Close();
@@ -27,11 +31,9 @@ namespace Files
 		
 		public static byte[] loadTextureFile(string path)
 		{
-			FileStream fs = new FileStream(path, FileMode.Open);
-			byte[] tex = new byte[fs.Length];
-			fs.Read(tex, 0, tex.Length);
-			fs.Close();
-			return tex;
+			Bitmap bmp = new Bitmap(path);
+			ImageConverter imc = new ImageConverter();
+			return (byte[])imc.ConvertTo(bmp, typeof(byte[]));
 		}
 		
 		public static int GetTextureId(Bitmap b)
