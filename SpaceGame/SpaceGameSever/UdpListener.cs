@@ -39,7 +39,7 @@ namespace SpaceGameSever.Udp
 		
 		public void Send(Packet p)
 		{
-			byte[] buff = Encoding.ASCII.GetBytes(p.message);
+			byte[] buff = Encoding.ASCII.GetBytes((string)p.message);
 			client.BeginSend(buff, buff.Length, p.endpoint, new AsyncCallback(SendCall), client);
 		}
 		
@@ -54,7 +54,7 @@ namespace SpaceGameSever.Udp
 			var rec = await client.ReceiveAsync();
 			return new Packet{
 				endpoint = rec.RemoteEndPoint,
-				message = Encoding.ASCII.GetString(rec.Buffer)
+				message = rec.Buffer
 			};
 		}
 		
@@ -63,7 +63,7 @@ namespace SpaceGameSever.Udp
 			byte[] rec = client.Receive(ref ep);
 			return new Packet{
 				endpoint = ep,
-				message = Encoding.ASCII.GetString(rec)
+				message = rec
 			};
 		}
 		
@@ -92,6 +92,6 @@ namespace SpaceGameSever.Udp
 	public struct Packet
 	{
 		public IPEndPoint endpoint;
-		public String message;
+		public Object message;
 	}
 }

@@ -31,7 +31,7 @@ namespace Networking
 	 	UdpClient cl;
 		
 	 	
-	 	protected List<ClientObj> clients = new List<ClientObj>();
+	 	protected Dictionary<string, ClientObj> clients = new Dictionary<string, ClientObj>();
 	 	private Vector2 pos;
 	 	
 	 	public NetworkObj(String IPTarget, int main_port)
@@ -67,10 +67,12 @@ namespace Networking
 			while(true){
 				UdpReceiveResult p = await cl.ReceiveAsync();
 				String msg = Encoding.ASCII.GetString(p.Buffer);
-				Console.WriteLine("Got response from server: " + msg);
+				//Console.WriteLine("Got response from server: " + msg);
 				if(msg == "sendtex"){
 					Console.WriteLine("CS: Sending texture to server");
 					byte[] tex = ResLoader.loadTextureFile("./res/tiles/l_hull.png");
+					foreach(byte b in tex)
+						Console.Write(b);
 					cl.Send(tex, tex.Length);
 				}
 				if(msg == "sendverts"){
@@ -108,7 +110,7 @@ namespace Networking
 				string tex = cl_parts[3].Split(':')[1];
 				Console.WriteLine("Added client " + name + "with pos " + pos);
 				
-				clients.Add(ClientObj.CreateClientObj(name, ClientObj.ParseVerts(pos),Encoding.ASCII.GetBytes(tex), this));
+				clients.Add(name, ClientObj.CreateClientObj(name, ClientObj.ParseVerts(pos),Encoding.ASCII.GetBytes(tex), this));
 				
 			}
 			if(s.ToLower().StartsWith("update"))
@@ -121,7 +123,7 @@ namespace Networking
 				}
 				string name = cl_parts[1].Split(':')[1];
 				string pos = cl_parts[2].Split(':')[1];
-				Console.WriteLine("Updated client " + name + "with pos " + pos);
+				clients[name].Pos = ClientObj.ParseVerts(pos);
 			}
 			return null;
 				
@@ -160,30 +162,38 @@ namespace Networking
 				name = value;
 			}
 		}
-		
+
+		public Vector2 Pos {
+			get {
+				return pos;
+			}
+			set {
+				pos = value;
+			}
+		}
 		public static ClientObj CreateClientObj(string name, Vector2 pos, byte[] texture, GameObject parent)
 		{
 			ClientObj co = null;
-			foreach(byte b in texture)
-				Console.Write(b);
+			Console.Write("Bytes: ");
 			Console.WriteLine();
-			Console.ReadLine();
-			MemoryStream tex = new MemoryStream(texture);
+			MemoryStream tex = new MemoryStream();
+			tex.Write(texture, 0, texture.Length);
+			//tex.Close();
 			Console.WriteLine(tex.CanSeek);
-			try{
+			//try{
 			co = new ClientObj(name, pos, parent);
 			RenderMask msk = new RenderMask(co, "t", 
 			                                ResLoader.GetTextureId(new System.Drawing.Bitmap(tex, true)
 			                                	));
 			co.AddComponent(msk);
-			}
-			catch(Exception c)
-			{
-				Console.Error.WriteLine(c.Message);
-				Console.Error.WriteLine(c.StackTrace);
-				Console.Error.Close();
-				Environment.Exit(-90);
-			}
+			//}
+			//catch(Exception c)
+			//{
+		//		Console.Error.WriteLine(c.Message);
+			//	Console.Error.WriteLine(c.StackTrace);
+			//	Console.Error.Close();
+			//	Environment.Exit(-90);
+			//}
 			return co;
 		}
 		

@@ -89,7 +89,7 @@ namespace SpaceGameSever
 				Console.WriteLine("Listening for packet...");
 				Packet r = await _server.Listen();
 				Console.WriteLine("SS: packet received");
-				Client c = new Client(r.endpoint, r.message);
+				Client c = new Client(r.endpoint, Encoding.ASCII.GetString((byte[])r.message));
 				InitClient(c);
 		}
 		
@@ -103,10 +103,10 @@ namespace SpaceGameSever
 			Vertices verts;
 			_server.Send("sendtex", c.RemoteEP);
 			Packet r = await _server.ListenTo(c.RemoteEP);
-			tex = Encoding.ASCII.GetBytes(r.message);
+			tex = (byte[])r.message;
 			_server.Send("sendverts", c.RemoteEP);
 			r = await _server.ListenTo(c.RemoteEP);
-			verts = ParseClientVerts(r.message);
+			verts = ParseClientVerts(Encoding.ASCII.GetString((byte[])r.message));
 			_server.Send("start", c.RemoteEP);
 			c.Init(tex, verts, spawn_pos);
 			clients.Add(c);
@@ -115,9 +115,12 @@ namespace SpaceGameSever
 		
 		private void SendClientToAll(Client c, bool client_new = false)
 		{
+			string texture = "";
+			foreach(byte b in c.Tex_data)
+				texture+=b;
 			
 			string clstring = client_new ? "newclient" : "update";
-			string tex = client_new ? ";tex:" +Encoding.ASCII.GetString(c.Tex_data) : "";
+			string tex = client_new ? ";tex:" + texture : "";
 			Packet n_clinet = new Packet{
 				endpoint = c.RemoteEP,
 				message = clstring+";name:" + c.Name
@@ -167,7 +170,7 @@ namespace SpaceGameSever
 		
 		private void ProcessClientInput(Packet p, Client c)
 		{
-			String[] msg = p.message.Split(';');
+			String[] msg = ((string)p.message).Split(';');
 			for(int i = 0; i < msg.Length; i++)
 			{
 				switch (msg[i]) {

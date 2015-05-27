@@ -54,8 +54,8 @@ namespace Game
 			//serverThread = new Thread(new ThreadStart(server_.Start));
 			//serverThread.Start();
 			
-			if(windows)
-				System.Diagnostics.Process.Start("C:/Users/kgauthier16/Desktop/SpaceGame/SpaceGame/SpaceGameSever/bin/Debug/spacegamesever.exe");
+			//if(windows)
+			//	System.Diagnostics.Process.Start("./SpaceGameSever.exe");
 			
 			NetworkObj c_obj = new NetworkObj(true);
 			c_obj.Connect();
