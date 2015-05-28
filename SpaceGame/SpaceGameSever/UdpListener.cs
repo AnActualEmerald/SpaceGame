@@ -72,7 +72,7 @@ namespace SpaceGameSever.Udp
 			byte[] rec = client.Receive(ref ep);
 			return new Packet{
 				endpoint = ep,
-				message = Encoding.ASCII.GetString(rec)
+				message = rec
 			};
 		}
 		

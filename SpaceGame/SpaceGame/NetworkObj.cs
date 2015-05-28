@@ -28,7 +28,9 @@ namespace Networking
 	{
 	 	IPEndPoint target;
 	 	IPEndPoint conn;
-	 	UdpClient cl;
+	 	UdpClient cl_in;
+	 	UdpClient cl_out;
+	 	
 		
 	 	
 	 	protected Dictionary<string, ClientObj> clients = new Dictionary<string, ClientObj>();
@@ -37,27 +39,30 @@ namespace Networking
 	 	public NetworkObj(String IPTarget, int main_port)
 		{
 	 		target = new IPEndPoint(IPAddress.Parse(IPTarget), main_port);
-			cl = new UdpClient();
+			cl_in = new UdpClient();
+			
 		}
 	 	
 	 	public NetworkObj(long IPTarget, int main_port)
 		{
 	 		
 			target = new IPEndPoint(new IPAddress(IPTarget), main_port);
-			cl = new UdpClient();
+			cl_in = new UdpClient();
 		}
 	 	
 	 	public NetworkObj(bool local)
 	 	{
-	 		target = new IPEndPoint(IPAddress.Loopback, 28889);
-	 		cl = new UdpClient();
+	 		target = new IPEndPoint(IPAddress.Loopback, 28888);
+	 		conn = new IPEndPoint(IPAddress.Loopback, 28889);
+	 		cl_in = new UdpClient(target);
+	 		cl_out = new UdpClient();
 	 	}
 		
 	 	public void Connect()
 	 	{
 	 		Console.WriteLine("Connecting to server");
-	 		cl.Connect(target);
-	 		cl.SendAsync(Encoding.ASCII.GetBytes("Burrito119"), 10);
+	 		cl_out.Connect(conn);
+	 		cl_out.SendAsync(Encoding.ASCII.GetBytes("Burrito119"), 10);
 	 		Console.WriteLine("Listening for respopnse");
 	 		finishConnect();
 		}
@@ -65,20 +70,18 @@ namespace Networking
 		private async void finishConnect()
 		{
 			while(true){
-				UdpReceiveResult p = await cl.ReceiveAsync();
+				UdpReceiveResult p = await cl_in.ReceiveAsync();
 				String msg = Encoding.ASCII.GetString(p.Buffer);
 				//Console.WriteLine("Got response from server: " + msg);
 				if(msg == "sendtex"){
 					Console.WriteLine("CS: Sending texture to server");
 					byte[] tex = ResLoader.loadTextureFile("./res/tiles/l_hull.png");
-					foreach(byte b in tex)
-						Console.Write(b);
-					cl.Send(tex, tex.Length);
+					cl_out.Send(tex, tex.Length);
 				}
 				if(msg == "sendverts"){
 					Console.WriteLine("CS: Sending verts to server");
 					byte[] buff = Encoding.ASCII.GetBytes("0,0;4,5;6,6;1,3");
-					cl.Send(buff, buff.Length);
+					cl_out.Send(buff, buff.Length);
 				}
 				if(msg == "start")
 				{
@@ -95,7 +98,7 @@ namespace Networking
 			//Console.WriteLine("Got: "+ s);
 			if(s == "sendinput"){
 				byte[] buff = Encoding.ASCII.GetBytes("W_DOWN;S_UP;A_DOWN");
-				cl.Send(buff, buff.Length);
+				cl_out.Send(buff, buff.Length);
 			}
 			if(s.ToLower().StartsWith("newclient"))
 			{
@@ -111,7 +114,7 @@ namespace Networking
 				Console.WriteLine("Added client " + name + "with pos " + pos);
 				
 				clients.Add(name, ClientObj.CreateClientObj(name, ClientObj.ParseVerts(pos),Encoding.ASCII.GetBytes(tex), this));
-				
+				Console.WriteLine("Added Client");
 			}
 			if(s.ToLower().StartsWith("update"))
 			{
@@ -123,6 +126,7 @@ namespace Networking
 				}
 				string name = cl_parts[1].Split(':')[1];
 				string pos = cl_parts[2].Split(':')[1];
+				Console.WriteLine("Key: "+name);
 				clients[name].Pos = ClientObj.ParseVerts(pos);
 			}
 			return null;
@@ -134,7 +138,8 @@ namespace Networking
 			
 			while(true)
 			{
-				UdpReceiveResult r = await cl.ReceiveAsync();
+				Console.WriteLine("Listening");
+				UdpReceiveResult r = await cl_in.ReceiveAsync();
 				ParseSeverRequest(r.Buffer);
 			}
 			
@@ -176,24 +181,25 @@ namespace Networking
 			ClientObj co = null;
 			Console.Write("Bytes: ");
 			Console.WriteLine();
-			MemoryStream tex = new MemoryStream();
-			tex.Write(texture, 0, texture.Length);
+			//MemoryStream tex = new MemoryStream();
+			//tex.Write(texture, 0, texture.Length);
 			//tex.Close();
-			Console.WriteLine(tex.CanSeek);
-			//try{
+			ResLoader.WriteTempFile(name + "_texture.png", texture);
+			//Console.WriteLine(tex.CanSeek);
+			try{
 			co = new ClientObj(name, pos, parent);
 			RenderMask msk = new RenderMask(co, "t", 
-			                                ResLoader.GetTextureId(new System.Drawing.Bitmap(tex, true)
+			                                ResLoader.GetTextureId(new System.Drawing.Bitmap(64, 64)//"./temp/"+name+"_texture.png")  //new System.Drawing.Bitmap(tex, true)
 			                                	));
 			co.AddComponent(msk);
-			//}
-			//catch(Exception c)
-			//{
-		//		Console.Error.WriteLine(c.Message);
-			//	Console.Error.WriteLine(c.StackTrace);
-			//	Console.Error.Close();
-			//	Environment.Exit(-90);
-			//}
+			}
+			catch(Exception c)
+			{
+				Console.Error.WriteLine(c.Message);
+				Console.Error.WriteLine(c.StackTrace);
+				Console.Error.Close();
+				Environment.Exit(-90);
+			}
 			return co;
 		}
 		

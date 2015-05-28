@@ -24,8 +24,8 @@ namespace SpaceGameSever
 	public class Server
 	{
 		#region private members
-		private UdpListner _server;
-		private UdpListner _connecter;
+		private UdpListner _server_out;
+		private UdpListner _server_in;
 		private Thread connect_thread;
 		private bool running = false;
 		private Vector2 spawn_pos;
@@ -40,7 +40,8 @@ namespace SpaceGameSever
 		public Server(bool toStart = false)
 		{
 			//TODO finish constructor implementation
-			_server = new UdpListner(IPAddress.Any, 28889, false);
+			_server_in = new UdpListner(IPAddress.Any, 28889, false);
+			_server_out = new UdpListner(28888);
 			connect_thread = new Thread(new ThreadStart(CheckForConn));
 			if(toStart)
 				Start();
@@ -87,7 +88,7 @@ namespace SpaceGameSever
 		{
 			Console.WriteLine("Connection thread started succesfully");
 				Console.WriteLine("Listening for packet...");
-				Packet r = await _server.Listen();
+				Packet r = await _server_in.Listen();
 				Console.WriteLine("SS: packet received");
 				Client c = new Client(r.endpoint, Encoding.ASCII.GetString((byte[])r.message));
 				InitClient(c);
@@ -101,13 +102,13 @@ namespace SpaceGameSever
 		{
 			byte[] tex;
 			Vertices verts;
-			_server.Send("sendtex", c.RemoteEP);
-			Packet r = await _server.ListenTo(c.RemoteEP);
+			_server_out.Send("sendtex", c.RemoteEP);
+			Packet r = await _server_in.ListenTo(c.RemoteEP);
 			tex = (byte[])r.message;
-			_server.Send("sendverts", c.RemoteEP);
-			r = await _server.ListenTo(c.RemoteEP);
+			_server_out.Send("sendverts", c.RemoteEP);
+			r = await _server_in.ListenTo(c.RemoteEP);
 			verts = ParseClientVerts(Encoding.ASCII.GetString((byte[])r.message));
-			_server.Send("start", c.RemoteEP);
+			_server_out.Send("start", c.RemoteEP);
 			c.Init(tex, verts, spawn_pos);
 			clients.Add(c);
 			SendClientToAll(c, true);
@@ -121,7 +122,7 @@ namespace SpaceGameSever
 			
 			string clstring = client_new ? "newclient" : "update";
 			string tex = client_new ? ";tex:" + texture : "";
-			Packet n_clinet = new Packet{
+			Packet n_client = new Packet{
 				endpoint = c.RemoteEP,
 				message = clstring+";name:" + c.Name
 					+";pos:"+c.Pos.X +","
@@ -130,15 +131,16 @@ namespace SpaceGameSever
 			
 			foreach(Client cc in clients)
 			{
-				n_clinet.endpoint = cc.RemoteEP;
-				_server.Send(n_clinet);
+				n_client.endpoint = cc.RemoteEP;
+				_server_out.Send(n_client);
 			}
+			Console.WriteLine("Done Client Send");
 		}
 		
 		private async Task<Packet> GetPacketFrom(IPEndPoint ep)
 		{	
 			do{
-				Packet p = await _server.Listen();
+				Packet p = await _server_in.Listen();
 				if(p.endpoint == ep)
 					return p;
 			}while(true);
@@ -159,11 +161,11 @@ namespace SpaceGameSever
 		
 		private void Input()
 		{
-			
+			//Console.WriteLine("Asking for input");
 			foreach(Client c in clients)
 			{
-				_server.Send("sendinput", c.RemoteEP);	
-				Packet p = _server.ListenToSync(c.RemoteEP);
+				_server_out.Send("sendinput", c.RemoteEP);	
+				Packet p = _server_in.ListenToSync(c.RemoteEP);
 				ProcessClientInput(p, c);
 			}
 		}
@@ -223,8 +225,10 @@ namespace SpaceGameSever
 			
 			
 			//update clients
-			foreach(Client c in clients)
-				SendClientToAll(c);
+			for(int i = 0; i < clients.Count; i++){
+				Console.WriteLine("Updating Clients");
+				SendClientToAll(clients[i]);
+			}
 		}
 		
 
