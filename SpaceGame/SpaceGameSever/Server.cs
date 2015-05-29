@@ -73,7 +73,7 @@ namespace SpaceGameSever
 					Update();
 					epsilon+=1000/60;
 					tps++;
-				}
+			}
 				
 				if(delta >= 1000)
 				{
@@ -91,6 +91,7 @@ namespace SpaceGameSever
 				Packet r = await _server_in.Listen();
 				Console.WriteLine("SS: packet received");
 				Client c = new Client(r.endpoint, Encoding.ASCII.GetString((byte[])r.message));
+				c.Ep_in = new IPEndPoint(r.endpoint.Address, 28888);
 				InitClient(c);
 		}
 		
@@ -102,13 +103,13 @@ namespace SpaceGameSever
 		{
 			byte[] tex;
 			Vertices verts;
-			_server_out.Send("sendtex", c.RemoteEP);
+			_server_out.Send("sendtex", c.Ep_in);
 			Packet r = await _server_in.ListenTo(c.RemoteEP);
 			tex = (byte[])r.message;
-			_server_out.Send("sendverts", c.RemoteEP);
+			_server_out.Send("sendverts", c.Ep_in);
 			r = await _server_in.ListenTo(c.RemoteEP);
 			verts = ParseClientVerts(Encoding.ASCII.GetString((byte[])r.message));
-			_server_out.Send("start", c.RemoteEP);
+			_server_out.Send("start", c.Ep_in);
 			c.Init(tex, verts, spawn_pos);
 			clients.Add(c);
 			SendClientToAll(c, true);
@@ -117,21 +118,24 @@ namespace SpaceGameSever
 		private void SendClientToAll(Client c, bool client_new = false)
 		{
 			string texture = "";
-			foreach(byte b in c.Tex_data)
-				texture+=b;
+			if(client_new){
+				foreach(byte b in c.Tex_data)
+					texture+=b;
+			}
 			
 			string clstring = client_new ? "newclient" : "update";
 			string tex = client_new ? ";tex:" + texture : "";
 			Packet n_client = new Packet{
-				endpoint = c.RemoteEP,
+				endpoint = c.Ep_in,
 				message = clstring+";name:" + c.Name
 					+";pos:"+c.Pos.X +","
 					+c.Pos.Y + tex
 			};
 			
+			
 			foreach(Client cc in clients)
 			{
-				n_client.endpoint = cc.RemoteEP;
+				n_client.endpoint = cc.Ep_in;
 				_server_out.Send(n_client);
 			}
 			Console.WriteLine("Done Client Send");
@@ -164,7 +168,7 @@ namespace SpaceGameSever
 			//Console.WriteLine("Asking for input");
 			foreach(Client c in clients)
 			{
-				_server_out.Send("sendinput", c.RemoteEP);	
+				_server_out.Send("sendinput", c.Ep_in);	
 				Packet p = _server_in.ListenToSync(c.RemoteEP);
 				ProcessClientInput(p, c);
 			}
@@ -172,7 +176,7 @@ namespace SpaceGameSever
 		
 		private void ProcessClientInput(Packet p, Client c)
 		{
-			String[] msg = ((string)p.message).Split(';');
+			String[] msg = (Encoding.ASCII.GetString((byte[])p.message)).Split(';');
 			for(int i = 0; i < msg.Length; i++)
 			{
 				switch (msg[i]) {

@@ -20,7 +20,8 @@ namespace SpaceGameSever
 	public class Client
 	{
 		string name;
-		IPEndPoint remoteEP;
+		IPEndPoint ep_out;
+		IPEndPoint ep_in;
 		Vector2 pos;
 		byte[] tex_data;
 		Vertices verts;
@@ -34,7 +35,7 @@ namespace SpaceGameSever
 		public Client(IPEndPoint remoteEP, string name = "non")
 		{
 			this.name = name;
-			this.remoteEP = remoteEP;
+			this.ep_out = remoteEP;
 		}
 				
 		#region properties
@@ -56,13 +57,21 @@ namespace SpaceGameSever
 		/// </summary>
 		public IPEndPoint RemoteEP {
 			get {
-				return remoteEP;
+				return ep_out;
 			}
 			set {
-				remoteEP = value;
+				ep_out = value;
 			}
 		}
 
+		public IPEndPoint Ep_in {
+			get {
+				return ep_in;
+			}
+			set {
+				ep_in = value;
+			}
+		}
 		public Vector2 Pos {
 			get {
 				return pos;

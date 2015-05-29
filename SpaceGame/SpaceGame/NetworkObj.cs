@@ -127,7 +127,11 @@ namespace Networking
 				string name = cl_parts[1].Split(':')[1];
 				string pos = cl_parts[2].Split(':')[1];
 				Console.WriteLine("Key: "+name);
+				try{
 				clients[name].Pos = ClientObj.ParseVerts(pos);
+				}catch(KeyNotFoundException e){
+					Console.Error.WriteLine(e.Message);
+				}
 			}
 			return null;
 				

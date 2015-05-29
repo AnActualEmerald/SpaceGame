@@ -75,6 +75,12 @@ namespace SpaceGameSever.Udp
 				message = rec
 			};
 		}
+
+		public UdpClient Client {
+			get {
+				return client;
+			}
+		}		
 		
 		#region callbacks
 		
