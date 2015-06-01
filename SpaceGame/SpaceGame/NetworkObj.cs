@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -60,6 +61,8 @@ namespace Networking
 		
 	 	public void Connect()
 	 	{
+	 		cl_in.Client.ReceiveTimeout = 5500;
+	 		cl_in.Client.SendTimeout = 5500;
 	 		Console.WriteLine("Connecting to server");
 	 		cl_out.Connect(conn);
 	 		cl_out.SendAsync(Encoding.ASCII.GetBytes("Burrito119"), 10);
@@ -76,6 +79,9 @@ namespace Networking
 				if(msg == "sendtex"){
 					Console.WriteLine("CS: Sending texture to server");
 					byte[] tex = ResLoader.loadTextureFile("./res/tiles/l_hull.png");
+					Bitmap b = new Bitmap(new MemoryStream(tex));
+					Console.WriteLine("Works here!");
+					//Console.ReadLine();
 					cl_out.Send(tex, tex.Length);
 				}
 				if(msg == "sendverts"){
@@ -110,10 +116,9 @@ namespace Networking
 				}
 				string name = cl_parts[1].Split(':')[1];
 				string pos = cl_parts[2].Split(':')[1];
-				string tex = cl_parts[3].Split(':')[1];
-				Console.WriteLine("Added client " + name + "with pos " + pos);
+				byte[] tex_data = cl_in.Receive(ref target);
 				
-				clients.Add(name, ClientObj.CreateClientObj(name, ClientObj.ParseVerts(pos),Encoding.ASCII.GetBytes(tex), this));
+				clients.Add(name, ClientObj.CreateClientObj(name, ClientObj.ParseVerts(pos), tex_data, this));
 				Console.WriteLine("Added Client");
 			}
 			if(s.ToLower().StartsWith("update"))
@@ -142,7 +147,6 @@ namespace Networking
 			
 			while(true)
 			{
-				Console.WriteLine("Listening");
 				UdpReceiveResult r = await cl_in.ReceiveAsync();
 				ParseSeverRequest(r.Buffer);
 			}
@@ -183,18 +187,13 @@ namespace Networking
 		public static ClientObj CreateClientObj(string name, Vector2 pos, byte[] texture, GameObject parent)
 		{
 			ClientObj co = null;
-			Console.Write("Bytes: ");
-			Console.WriteLine();
-			//MemoryStream tex = new MemoryStream();
-			//tex.Write(texture, 0, texture.Length);
-			//tex.Close();
-			ResLoader.WriteTempFile(name + "_texture.png", texture);
-			//Console.WriteLine(tex.CanSeek);
+			
 			try{
+				new Bitmap(new MemoryStream(texture)).Save("./temp/test.png");
 			co = new ClientObj(name, pos, parent);
 			RenderMask msk = new RenderMask(co, "t", 
-			                                ResLoader.GetTextureId(new System.Drawing.Bitmap(64, 64)//"./temp/"+name+"_texture.png")  //new System.Drawing.Bitmap(tex, true)
-			                                	));
+			                                ResLoader.GetTextureId(
+			                                	new Bitmap(new MemoryStream(texture))));
 			co.AddComponent(msk);
 			}
 			catch(Exception c)

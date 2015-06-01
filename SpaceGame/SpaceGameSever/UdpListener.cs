@@ -36,10 +36,36 @@ namespace SpaceGameSever.Udp
 			listen_to = null;
 		}
 		
+		public int RecTimeout
+		{
+			get{
+				return client.Client.ReceiveTimeout;
+			}
+			set{
+				client.Client.ReceiveTimeout = value;
+			}
+		}
+		
+		
+		public int SendTimeout
+		{
+			get{
+				return client.Client.SendTimeout;
+			}
+			set{
+				client.Client.SendTimeout = value;
+			}
+		}
 		
 		public void Send(Packet p)
 		{
-			byte[] buff = Encoding.ASCII.GetBytes((string)p.message);
+			byte[] buff = new byte[0];
+			try{
+				buff = Encoding.ASCII.GetBytes((string)p.message);
+			}
+			catch(InvalidCastException){
+				buff = (byte[])p.message;
+			}
 			client.BeginSend(buff, buff.Length, p.endpoint, new AsyncCallback(SendCall), client);
 		}
 		

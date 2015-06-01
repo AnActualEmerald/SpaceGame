@@ -7,6 +7,8 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,6 +44,8 @@ namespace SpaceGameSever
 			//TODO finish constructor implementation
 			_server_in = new UdpListner(IPAddress.Any, 28889, false);
 			_server_out = new UdpListner(28888);
+			_server_out.SendTimeout = 5500;
+			_server_in.RecTimeout = 5500;
 			connect_thread = new Thread(new ThreadStart(CheckForConn));
 			if(toStart)
 				Start();
@@ -106,6 +110,8 @@ namespace SpaceGameSever
 			_server_out.Send("sendtex", c.Ep_in);
 			Packet r = await _server_in.ListenTo(c.RemoteEP);
 			tex = (byte[])r.message;
+			Bitmap b = new Bitmap(new System.IO.MemoryStream(tex));
+			Console.WriteLine("Works here as well");
 			_server_out.Send("sendverts", c.Ep_in);
 			r = await _server_in.ListenTo(c.RemoteEP);
 			verts = ParseClientVerts(Encoding.ASCII.GetString((byte[])r.message));
@@ -117,26 +123,33 @@ namespace SpaceGameSever
 		
 		private void SendClientToAll(Client c, bool client_new = false)
 		{
-			string texture = "";
-			if(client_new){
-				foreach(byte b in c.Tex_data)
-					texture+=b;
-			}
-			
 			string clstring = client_new ? "newclient" : "update";
-			string tex = client_new ? ";tex:" + texture : "";
 			Packet n_client = new Packet{
 				endpoint = c.Ep_in,
 				message = clstring+";name:" + c.Name
 					+";pos:"+c.Pos.X +","
-					+c.Pos.Y + tex
+					+c.Pos.Y
 			};
 			
+			
+			Packet texture = new Packet{
+				endpoint = c.Ep_in,
+				message = c.Tex_data
+			};
+			
+			Bitmap bit = new Bitmap(new MemoryStream((byte[])texture.message));
+			Console.WriteLine("Still fine");
 			
 			foreach(Client cc in clients)
 			{
 				n_client.endpoint = cc.Ep_in;
 				_server_out.Send(n_client);
+				
+				if(client_new)
+				{			
+					texture.endpoint = cc.Ep_in;
+					_server_out.Send(texture);
+				}
 			}
 			Console.WriteLine("Done Client Send");
 		}
