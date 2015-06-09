@@ -31,6 +31,7 @@ namespace SpaceGameSever
 		private Thread connect_thread;
 		private bool running = false;
 		private Vector2 spawn_pos;
+		private PhysicsWorld world;
 		#endregion
 		
 		public List<Client> clients = new List<Client>();
@@ -47,6 +48,7 @@ namespace SpaceGameSever
 			_server_out.SendTimeout = 5500;
 			_server_in.RecTimeout = 5500;
 			connect_thread = new Thread(new ThreadStart(CheckForConn));
+			world = new PhysicsWorld(new Vector2(0,0), 64);
 			if(toStart)
 				Start();
 		}
@@ -110,14 +112,18 @@ namespace SpaceGameSever
 			_server_out.Send("sendtex", c.Ep_in);
 			Packet r = await _server_in.ListenTo(c.RemoteEP);
 			tex = (byte[])r.message;
-			Bitmap b = new Bitmap(new System.IO.MemoryStream(tex));
-			Console.WriteLine("Works here as well");
-			_server_out.Send("sendverts", c.Ep_in);
-			r = await _server_in.ListenTo(c.RemoteEP);
-			verts = ParseClientVerts(Encoding.ASCII.GetString((byte[])r.message));
 			_server_out.Send("start", c.Ep_in);
-			c.Init(tex, verts, spawn_pos);
+			c.Init(tex, 0, spawn_pos);
+			try{
+			c.loadVertsFromTexture();
+			}catch(Exception e)
+			{
+				Console.WriteLine(e.Message);
+				Console.WriteLine(e.StackTrace);
+				Console.ReadLine();
+			}
 			clients.Add(c);
+			world.AddClient(c);
 			SendClientToAll(c, true);
 		}
 		
@@ -128,7 +134,7 @@ namespace SpaceGameSever
 				endpoint = c.Ep_in,
 				message = clstring+";name:" + c.Name
 					+";pos:"+c.Pos.X +","
-					+c.Pos.Y
+					+c.Pos.Y +";rot:"+c.Rot
 			};
 			
 			
@@ -239,7 +245,12 @@ namespace SpaceGameSever
 		private void Update()
 		{
 			//step physics
+			world.Step();
 			
+			foreach(Client c in clients){
+				c.Rot = world.GetBody(c.Name).Rotation;
+				c.Pos = world.GetBody(c.Name).Position;
+			}
 			
 			//update clients
 			for(int i = 0; i < clients.Count; i++){
