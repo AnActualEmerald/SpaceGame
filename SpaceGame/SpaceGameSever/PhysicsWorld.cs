@@ -39,7 +39,8 @@ namespace SpaceGameSever
 			c_body.Position = c.Pos;
 			c_body.Rotation = c.Rot;
 			Fixture c_fix = c_body.CreateFixture(c.Ship_Shape);
-			_world.AddBody(c_body);
+			//_world.AddBody(c_body);
+            Console.WriteLine("Name: " + c.Name);
 			fixtures.Add(c.Name, c_fix);
 		}
 		
@@ -48,7 +49,7 @@ namespace SpaceGameSever
 			try{
 				return fixtures[clientName];
 			}catch(KeyNotFoundException e){
-				Console.Error.WriteLine("Key no found in Fixtures");
+				Console.Error.WriteLine("Key not found in Fixtures");
 				Console.Error.WriteLine(e.Message);
 				Console.Error.WriteLine(e.StackTrace);
 				return null;
@@ -59,7 +60,7 @@ namespace SpaceGameSever
 			try{
 				return fixtures[clientName].Body;
 			}catch(KeyNotFoundException e){
-				Console.Error.WriteLine("Key no found in Fixtures");
+				Console.Error.WriteLine("Key not found in Fixtures");
 				Console.Error.WriteLine(e.Message);
 				Console.Error.WriteLine(e.StackTrace);
 				return null;

@@ -49,6 +49,8 @@ namespace SpaceGameSever
 			_server_in.RecTimeout = 5500;
 			connect_thread = new Thread(new ThreadStart(CheckForConn));
 			world = new PhysicsWorld(new Vector2(0,0), 64);
+            FarseerPhysics.Settings.MaxPolygonVertices = 128;
+            Console.WriteLine("MAX VERTS: "+ FarseerPhysics.Settings.MaxPolygonVertices);
 			if(toStart)
 				Start();
 		}
@@ -114,16 +116,19 @@ namespace SpaceGameSever
 			tex = (byte[])r.message;
 			_server_out.Send("start", c.Ep_in);
 			c.Init(tex, 0, spawn_pos);
+            Bitmap bit = new Bitmap(new MemoryStream(tex));
+            Console.WriteLine("Got all the stuff for "+c.Name+", tex width " +bit.Width);
 			try{
-			c.loadVertsFromTexture();
+		    	c.loadVertsFromTexture();
 			}catch(Exception e)
 			{
 				Console.WriteLine(e.Message);
 				Console.WriteLine(e.StackTrace);
 				Console.ReadLine();
 			}
-			clients.Add(c);
-			world.AddClient(c);
+            Console.WriteLine("Done init of client: " + c.Name);
+            world.AddClient(c);
+            clients.Add(c);
 			SendClientToAll(c, true);
 		}
 		
@@ -184,9 +189,10 @@ namespace SpaceGameSever
 		
 		private void Input()
 		{
-			//Console.WriteLine("Asking for input");
+		//	Console.WriteLine("Asking for input");
 			foreach(Client c in clients)
 			{
+               // Console.WriteLine("Asking for input for: " + c.Name);
 				_server_out.Send("sendinput", c.Ep_in);	
 				Packet p = _server_in.ListenToSync(c.RemoteEP);
 				ProcessClientInput(p, c);
@@ -244,6 +250,7 @@ namespace SpaceGameSever
 		
 		private void Update()
 		{
+          //  Console.WriteLine("Update start...");
 			//step physics
 			world.Step();
 			
@@ -254,9 +261,11 @@ namespace SpaceGameSever
 			
 			//update clients
 			for(int i = 0; i < clients.Count; i++){
-				Console.WriteLine("Updating Clients");
+				//Console.WriteLine("Updating Clients");
 				SendClientToAll(clients[i]);
 			}
+
+         //   Console.WriteLine("Update end");
 		}
 		
 

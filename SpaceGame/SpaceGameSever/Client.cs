@@ -153,14 +153,17 @@ namespace SpaceGameSever
 			{
 				if(int_to_be.Count == 4){
 					tmp.Add(BitConverter.ToUInt32(int_to_be.ToArray(), 0));
+                    if (tmp.Count % texture.Width == 0)
+                        break;
 					int_to_be.Clear();
 				}
 				int_to_be.Add(bits[i-1]);
-											
+					
 			}
 			Vertices v;
 			Console.WriteLine("TMP LEN: " + tmp.Count);
-			Console.ReadLine();
+            uint[] ui = tmp.ToArray();
+            Console.WriteLine("FIN LEN: "+ui.Length);
 			v = TextureConverter.DetectVertices(tmp.ToArray(), 64);
 			verts = v;
 			shipshape = new PolygonShape(v, 1.0f);

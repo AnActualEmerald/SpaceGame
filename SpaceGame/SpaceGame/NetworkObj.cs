@@ -79,8 +79,8 @@ namespace Networking
 				if(msg == "sendtex"){
 					Console.WriteLine("CS: Sending texture to server");
 					byte[] tex = ResLoader.loadTextureFile("./res/tiles/l_hull.png");
-					Bitmap b = new Bitmap(new MemoryStream(tex));
-					Console.WriteLine("Works here!");
+			//		Bitmap b = new Bitmap(new MemoryStream(tex));
+			//		Console.WriteLine("Works here!");
 					//Console.ReadLine();
 					cl_out.Send(tex, tex.Length);
 				}
@@ -101,7 +101,7 @@ namespace Networking
 		private Object ParseSeverRequest(byte[] b)
 		{
 			string s = Encoding.ASCII.GetString(b);
-			//Console.WriteLine("Got: "+ s);
+			Console.WriteLine("Got: "+ s);
 			if(s == "sendinput"){
 				byte[] buff = Encoding.ASCII.GetBytes("W_DOWN;S_UP;A_DOWN");
 				cl_out.Send(buff, buff.Length);
@@ -148,6 +148,7 @@ namespace Networking
 			while(true)
 			{
 				UdpReceiveResult r = await cl_in.ReceiveAsync();
+                Console.WriteLine("Got One");
 				ParseSeverRequest(r.Buffer);
 			}
 			

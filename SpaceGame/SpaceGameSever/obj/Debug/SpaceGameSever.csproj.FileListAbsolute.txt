@@ -14,3 +14,11 @@ C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\ShipBu
 C:\Users\kgauthier16\Desktop\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\ShipBuildUtils.pdb
 C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\ShipBuildUtils.dll
 C:\Users\kgauthier16\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\ShipBuildUtils.pdb
+C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\SpaceGameSever.exe.config
+C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\obj\Debug\SpaceGameSever.exe
+C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\obj\Debug\SpaceGameSever.pdb
+C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\SpaceGameSever.exe
+C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\SpaceGameSever.pdb
+C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\ShipBuildUtils.dll
+C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\bin\Debug\ShipBuildUtils.pdb
+C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGameSever\obj\Debug\SpaceGameSever.csprojResolveAssemblyReference.cache
