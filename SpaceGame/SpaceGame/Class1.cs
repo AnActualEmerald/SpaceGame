@@ -9,6 +9,7 @@ using FileManager;
 using Core.Graphics;
 using GUI;
 using System.Text;
+using OpenTK;
 
 namespace Game
 {
@@ -31,7 +32,9 @@ namespace Game
         {        	
         	foreach(string s in args)
         		Console.WriteLine("Console Argument: " + s);
-			string version = OpenTK.Graphics.OpenGL.GL.GetString(OpenTK.Graphics.OpenGL.StringName.Version);
+        	
+        	string version =
+				OpenTK.Graphics.OpenGL.GL.GetString(OpenTK.Graphics.OpenGL.StringName.Version);
 			if(version.StartsWith("3") || version.StartsWith("4")){
 				Console.WriteLine("OpenGL ok with version: " + version);
 				shader = new Shader ("./Shader/basic");
@@ -50,20 +53,13 @@ namespace Game
 				windows = true;
 			}
 			
-			//Server server_ = new Server();
-			//serverThread = new Thread(new ThreadStart(server_.Start));
-			//serverThread.Start();
+		//	NetworkObj c_obj = new NetworkObj(true);
+		//	c_obj.Connect();
 			
-			//if(windows)
-			//	System.Diagnostics.Process.Start("./SpaceGameSever.exe");
+		//	Console.ReadLine();
 			
-			NetworkObj c_obj = new NetworkObj(true);
-			c_obj.Connect();
-			
-			Console.ReadLine();
-			
-		//	c.load += load;
-		//	c.start ();
+			c.load += load;
+			c.start ();
         }
 
 		//Scene 0 = menu
@@ -79,7 +75,7 @@ namespace Game
 			sc.AddScene (scene1, 1);
 
 			GameObject scene0 = new GameObject (sc, c);
-			UIButton start = new UIButton (new Microsoft.Xna.Framework.Vector2(0, 0), 128, 64, "./res/buttons/start", scene0);
+			UIButton start = new UIButton (new Vector2(0, 0), 128, 64, "./res/buttons/start", scene0);
 			scene0.AddChild (start);
 			sc.AddScene (scene0, 0);
 

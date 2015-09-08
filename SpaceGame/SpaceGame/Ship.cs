@@ -162,7 +162,7 @@ namespace ShipBuild
 			s_fixture = FixtureFactory.AttachPolygon (v, 1, body.body);
 			texture = init_mask (render_tiles, out v);
 			ship_mask = new RenderMask(this, "t", ResLoader.GetTextureId(texture));
-			ship_mask.SetVerts (v.GetAABB().Vertices);
+			ship_mask.SetVerts (RenderMask.ConvertToVector2(v.GetAABB().Vertices));
 			ship_mask.init ();
 			AddComponent (ship_mask);
 			AddComponent(body);

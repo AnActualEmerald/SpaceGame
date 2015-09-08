@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Game;
 using OpenTK.Graphics.OpenGL;
-using FarseerPhysics.Common;
 using OpenTK;
+using FarseerPhysics.Common;
 
 namespace Core.Graphics
 {
@@ -55,22 +55,10 @@ namespace Core.Graphics
 			this.tex_id = id;
 		}
 
-		public void SetVerts(Vertices verts, bool convertToDisplay = false)
+		public void SetVerts(List<Vector2> verts)
 		{
-			if (convertToDisplay) {
-				Vertices vvvvvv = verts;
-				for(int i = 0; i < vvvvvv.Count; i++) {
-					Microsoft.Xna.Framework.Vector2 xx = vvvvvv.ToArray()[i];
-					Microsoft.Xna.Framework.Vector2 x = xx;
-					verts.Remove (xx);
-					x.X = FarseerPhysics.ConvertUnits.ToDisplayUnits (xx.X);
-					x.Y = FarseerPhysics.ConvertUnits.ToDisplayUnits (xx.Y);
-					verts.Add (x);
-				}
-			}
-
-			Microsoft.Xna.Framework.Vector2[] vv = new Microsoft.Xna.Framework.Vector2[4];
-			foreach(Microsoft.Xna.Framework.Vector2 h in verts)
+			Vector2[] vv = new Vector2[4];
+			foreach(Vector2 h in verts)
 			{
 				if (h.X == 0 && h.Y == 0)
 					vv [0] = h;
@@ -86,7 +74,7 @@ namespace Core.Graphics
 			List<float> f_v = new List<float>();
 			List<float> f_c = new List<float> ();
 			for (int i = 0; i < vv.Length; i++) {
-				Microsoft.Xna.Framework.Vector2 v = vv[i];
+				Vector2 v = vv[i];
 				Console.WriteLine ("Here is vert to set: " + v);
 				f_v.Add (v.X);
 				if (v.X > 0)
@@ -238,6 +226,14 @@ namespace Core.Graphics
 			m_scale = Matrix4.CreateScale(sx, sy, 1);
 		}
 
+		public static List<Vector2> ConvertToVector2(Vertices verts){
+			List<Vector2> optk_verts = new List<Vector2>();
+			foreach(Microsoft.Xna.Framework.Vector2 v in verts){
+				optk_verts.Add(new Vector2(v.X, v.Y));
+			}
+			return optk_verts;
+		}
+		
 	}
 }
 

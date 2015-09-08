@@ -85,6 +85,7 @@ namespace Core
 
         public virtual void Update(Object sender, FrameEventArgs e)
         {
+        	        	
             timeNowTicks = GetTimeMillis(DateTime.Now);
 			//do updates here
 

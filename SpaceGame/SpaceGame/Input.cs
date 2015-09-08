@@ -8,7 +8,8 @@
  */
 using System;
 using OpenTK.Input;
-using Microsoft.Xna.Framework;
+using OpenTK;
+using System.Drawing;
 
 namespace Core
 {
