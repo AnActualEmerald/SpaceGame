@@ -147,9 +147,9 @@ namespace ShipBuild
 		{
 
 			base.init ();
-			body = new PhysicsBody(world.GetWorld(), 
-				new Microsoft.Xna.Framework.Vector2(0, 0), 
-				0, null, this);
+            body = new PhysicsBody(world.GetWorld(),
+                new Microsoft.Xna.Framework.Vector2(0, 0),
+                0, null, this);
 			body.body.BodyType = BodyType.Dynamic;
 			Vertices v = new Vertices();
 			foreach (TileBasic tb in render_tiles) {
@@ -161,7 +161,8 @@ namespace ShipBuild
 			}
 			s_fixture = FixtureFactory.AttachPolygon (v, 1, body.body);
 			texture = init_mask (render_tiles, out v);
-			ship_mask = new RenderMask(this, "t", ResLoader.GetTextureId(texture));
+            int gg = ResLoader.GetTextureId(texture);
+            ship_mask = new RenderMask(this, "t", gg);
 			ship_mask.SetVerts (RenderMask.ConvertToVector2(v.GetAABB().Vertices));
 			ship_mask.init ();
 			AddComponent (ship_mask);

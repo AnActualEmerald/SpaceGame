@@ -9,6 +9,8 @@ namespace Core.Graphics
 {
 	public class RenderMask : Component
 	{
+        public static int num_vbo = 0;
+
 		protected int tex_id;
 		protected RenderingEngine engine;
 		private String engine_s;
@@ -162,6 +164,7 @@ namespace Core.Graphics
 				Console.Error.Flush ();
 				throw new NullReferenceException ("Render engine for engine under \"" + engine_s + "\" was null");
 			}
+            Console.WriteLine("rendering");
 			engine.MakeRequest(new RenderRequest(ref _instance));
 			
 		}
@@ -203,13 +206,19 @@ namespace Core.Graphics
 			Console.WriteLine ("init done");
 		}
 
-		/// <summary>
-		/// Rotate the specified a, point and pos.
-		/// </summary>
-		/// <param name="a">The angle.</param>
-		/// <param name="point">The local point around which the mask rotates.</param>
-		/// <param name="pos">The current position of the mask to get back to the origin.</param>
-		public void Rotate(float a, Vector2 point, Vector3 pos)
+        public override void Dispose()
+        {
+            GL.DeleteVertexArray(vao);
+            GL.DeleteTexture(tex_id);
+        }
+
+        /// <summary>
+        /// Rotate the specified a, point and pos.
+        /// </summary>
+        /// <param name="a">The angle.</param>
+        /// <param name="point">The local point around which the mask rotates.</param>
+        /// <param name="pos">The current position of the mask to get back to the origin.</param>
+        public void Rotate(float a, Vector2 point, Vector3 pos)
 		{
 			m_rot = Matrix4.CreateRotationZ (a);
 			m_rot = Matrix4.CreateTranslation (-pos) * Matrix4.CreateTranslation (new Vector3 (-point.X, -point.Y, 0)) * m_rot

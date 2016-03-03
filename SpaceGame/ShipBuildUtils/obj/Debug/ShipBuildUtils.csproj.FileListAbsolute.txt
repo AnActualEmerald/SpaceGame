@@ -13,3 +13,8 @@ C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\ShipBuildUtils\bin\Debug
 C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\ShipBuildUtils\obj\Debug\ShipBuildUtils.csprojResolveAssemblyReference.cache
 C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\ShipBuildUtils\obj\Debug\ShipBuildUtils.dll
 C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\ShipBuildUtils\obj\Debug\ShipBuildUtils.pdb
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\ShipBuildUtils\bin\Debug\ShipBuildUtils.dll
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\ShipBuildUtils\bin\Debug\ShipBuildUtils.pdb
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\ShipBuildUtils\obj\Debug\ShipBuildUtils.csprojResolveAssemblyReference.cache
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\ShipBuildUtils\obj\Debug\ShipBuildUtils.dll
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\ShipBuildUtils\obj\Debug\ShipBuildUtils.pdb

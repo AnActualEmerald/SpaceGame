@@ -120,13 +120,14 @@ namespace GUI
 			inactive = active;
 			pressed = active;
 
+            Console.WriteLine("Button ID: " +active);
+
 			base.init ();
 
 			List<Vector2> verts = new List<Vector2>();
-			verts.Add(new Vector2(0, 0));
-			verts.Add(new Vector2(width, 0));
-			verts.Add(new Vector2(width, height));
-			verts.Add(new Vector2(0, height));
+            foreach (Vector2 v in corners)
+                verts.Add(v);
+            
 
 			renderer = new RenderMask (this, "ui", inactive);
 			renderer.SetVerts (verts);

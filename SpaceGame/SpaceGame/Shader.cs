@@ -128,6 +128,12 @@ namespace Core.Graphics
 		public override void Update ()
 		{
 		}
-	}
+
+        public override void Dispose()
+        {
+            GL.DeleteProgram(prog);
+
+        }
+    }
 }
 

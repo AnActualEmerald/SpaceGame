@@ -46,3 +46,16 @@ C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\Spac
 C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuildUtils.pdb
 C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\SpaceGameLauncher.pdb
 C:\Users\kevin_000\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\SpaceGameSever.pdb
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuild.exe.config
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.exe
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.pdb
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuild.exe
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuild.pdb
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuildUtils.dll
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\SpaceGameLauncher.exe
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\ShipBuildUtils.pdb
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\SpaceGameLauncher.pdb
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\OpenTK.pdb
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\OpenTK.xml
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\SpaceGameSever.pdb
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.csprojResolveAssemblyReference.cache

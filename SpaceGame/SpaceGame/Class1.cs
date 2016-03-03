@@ -59,7 +59,17 @@ namespace Game
 		//	Console.ReadLine();
 			
 			c.load += load;
-			c.start ();
+            try {
+                c.start();
+            }catch(Exception e)
+            {
+                Console.WriteLine("Exception " + e.Message + "occurred");
+                Console.Error.WriteLine(e.Message);
+                Console.Error.WriteLine(e.StackTrace);
+                Console.Error.WriteLine(e.TargetSite);
+                Console.Error.Close();
+                Environment.Exit(1000);
+            }
         }
 
 		//Scene 0 = menu
@@ -75,8 +85,14 @@ namespace Game
 			sc.AddScene (scene1, 1);
 
 			GameObject scene0 = new GameObject (sc, c);
-			UIButton start = new UIButton (new Vector2(0, 0), 128, 64, "./res/buttons/start", scene0);
-			scene0.AddChild (start);
+			UIButton start = new UIButton (
+                new Vector2(
+                    CoreEngine.display.PointToScreen(new System.Drawing.Point(0, 0)).X, 
+                    CoreEngine.display.PointToScreen(new System.Drawing.Point(0, 0)).Y), 
+                128, 64, "./res/buttons/start", scene0);
+            start.OnClick += ON_StartClick;
+            start.OnRelease += ON_StartClick;
+            scene0.AddChild (start);
 			sc.AddScene (scene0, 0);
 
 			sc.SwitchToScene (0);

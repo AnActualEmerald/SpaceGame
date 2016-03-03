@@ -15,7 +15,7 @@ namespace Core
 {
     public class CoreEngine
     {
-        private Display display;
+        public static Display display;
 
         private int maxTicks, maxFrames;
         private long timeNowTicks, lastTimeTicks;
@@ -75,6 +75,7 @@ namespace Core
             display.RenderFrame += Render;
             display.Load += loadRes;
 			display.Resize += onResize;
+            display.Closing += onClose;
             display.VSync = VSyncMode.Off;
             lastTimeTicks = GetTimeMillis(DateTime.Now);
             if (maxFrames != 0)
@@ -120,6 +121,11 @@ namespace Core
 			BackgroundEngine.Clear();
         }
 
+        void onClose (object sender, EventArgs e)
+        {
+            root.dispose();
+        }
+
 		void onResize (object sender, EventArgs e)
 		{
 			GL.Viewport (0, 0, display.Width, display.Height);
@@ -141,7 +147,7 @@ namespace Core
 			//GL.LoadIdentity ();
 			//GL.Ortho (0, display.Width, display.Height, 0, -1, 1);
 
-		  //  GL.Enable (EnableCap.Texture2D);
+		 // GL.Enable (EnableCap.Texture2D);
 
 			GL.Enable (EnableCap.Blend);
 			GL.BlendFunc (BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);

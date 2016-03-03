@@ -6,7 +6,7 @@ namespace Core
 	public class SceneManager : GameObject
 	{
 		private GameObject[] scenes;
-
+        private GameObject currentscene;
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Core.SceneManager"/> class.
 		/// </summary>
@@ -25,18 +25,43 @@ namespace Core
 
 		public void SwitchToScene(int index)
 		{
-			children.Clear ();
-			AddChild (scenes [index]);
+            currentscene = scenes[index];
+            if (!currentscene.BeenInit)
+                currentscene.init();
+
 		}
 
-		public override void init ()
-		{
-			base.init ();
+        public override void init()
+        {
+            base.init();
+            foreach (GameObject g in scenes)
+                if(g != null && !g.BeenInit)
+                g.init();
+        }
 
-			foreach (GameObject g in scenes)
-				if(g != null)
-					g.init ();
-		}
-	}
+        public override void Input()
+        {
+            base.Input();
+            currentscene.Input();
+        }
+
+        public override void Update()
+        {
+        //    base.Update();
+            currentscene.Update();
+        }
+
+        public override void Render()
+        {
+          //  base.Render();
+            currentscene.Render();
+        }
+
+        public override void dispose()
+        {
+            base.dispose();
+            currentscene.dispose();
+        }
+    }
 }
 

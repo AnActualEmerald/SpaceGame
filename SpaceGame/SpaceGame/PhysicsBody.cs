@@ -56,5 +56,10 @@ namespace Game
 		{
 			
 		}
-	}
+
+        public override void Dispose()
+        {
+       
+        }
+    }
 }

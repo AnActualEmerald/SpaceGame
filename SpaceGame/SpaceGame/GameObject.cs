@@ -91,6 +91,15 @@ namespace Game
             return this;
         }
 
+        public virtual void dispose()
+        {
+            foreach (GameObject g in children)
+                g.dispose();
+            foreach (Component c in components)
+                c.Dispose();
+        }
+
+
         private void _init_lists()
         {
         	children = new List<GameObject>();

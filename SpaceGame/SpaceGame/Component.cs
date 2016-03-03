@@ -14,5 +14,6 @@ namespace Game
         public abstract void Render();
         public abstract void Input();
         public abstract void init();
+        public abstract void Dispose();
     }
 }
