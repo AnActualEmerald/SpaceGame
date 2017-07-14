@@ -173,11 +173,14 @@ namespace ShipBuild
 		}
 
 		float i = 0;
+        float t = 0;
 		public override void Update ()
 		{
 			base.Update ();
 			ship_mask.Rotate (i, new OpenTK.Vector2(width / 2, height / 2), Position);
 			i += 0.05f;
+            ship_mask.Translate(t, 0);
+            t += 0.5f;
 		}
 			
 	}

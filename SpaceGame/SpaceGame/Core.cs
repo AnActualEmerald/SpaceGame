@@ -143,17 +143,17 @@ namespace Core
 
 		private void init_view()
 		{
-			//GL.MatrixMode (MatrixMode.Projection);
-			//GL.LoadIdentity ();
-			//GL.Ortho (0, display.Width, display.Height, 0, -1, 1);
-
-		 // GL.Enable (EnableCap.Texture2D);
+			GL.MatrixMode (MatrixMode.Projection);
+			GL.LoadIdentity ();
+            GL.Viewport(0, 0, display.Width, display.Height);
+           // GL.MatrixMode(MatrixMode.Modelview);
+            
+		    GL.Enable (EnableCap.Texture2D);
 
 			GL.Enable (EnableCap.Blend);
 			GL.BlendFunc (BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-			//GL.FrontFace (FrontFaceDirection.Cw);
-			GL.Enable (EnableCap.CullFace);
+	     	GL.Enable (EnableCap.CullFace);
 			GL.CullFace (CullFaceMode.Back);
 		}
 		

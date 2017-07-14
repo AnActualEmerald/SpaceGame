@@ -79,17 +79,9 @@ namespace Game
 		{			
 			sc = new SceneManager (c.root, c, 3);
 
-			GameObject scene1 = new GameObject (sc, c);
-			Ship s = new Ship ("mino", c);
-			scene1.AddChild (s);
-			sc.AddScene (scene1, 1);
-
 			GameObject scene0 = new GameObject (sc, c);
 			UIButton start = new UIButton (
-                new Vector2(
-                    CoreEngine.display.PointToScreen(new System.Drawing.Point(0, 0)).X, 
-                    CoreEngine.display.PointToScreen(new System.Drawing.Point(0, 0)).Y), 
-                128, 64, "./res/buttons/start", scene0);
+                new Vector2(0,0),128, 64, "./res/buttons/start", scene0);
             start.OnClick += ON_StartClick;
             start.OnRelease += ON_StartClick;
             scene0.AddChild (start);
@@ -97,7 +89,12 @@ namespace Game
 
 			sc.SwitchToScene (0);
 
-			shader.Post_init += shader_init;
+            GameObject scene1 = new GameObject(sc, c);
+            Ship s = new Ship("mino", c);
+            scene1.AddChild(s);
+            sc.AddScene(scene1, 1);
+
+            shader.Post_init += shader_init;
 			shader.init ();
 			c.root.AddComponent (shader);
 			c.root.AddChild (sc);

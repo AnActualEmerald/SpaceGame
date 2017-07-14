@@ -30,7 +30,8 @@ namespace GUI
 
 		private RenderMask renderer;
 		private Vector2[] corners;
-		
+        private Vector2 position;
+
 		public event Action<Object> OnClick;
 		public event Action<Object> OnRelease;
 		
@@ -40,10 +41,13 @@ namespace GUI
 			path = texture_loaction;
 			this.width = width;
 			this.height = height;
-			corners = new Vector2[]{pos, 
-				new Vector2(pos.X + width, pos.Y),
-				new Vector2(pos.X + width, pos.Y + height),
-				new Vector2(pos.X, pos.Y + height)};
+            position = pos;
+            			corners = new Vector2[]{
+                new Vector2(),
+				new Vector2(width, 0),
+				new Vector2(width, height),
+				new Vector2(0, height)};
+			
 			
 			renderState = ButtonState.INACTIVE;
 		}
@@ -55,10 +59,11 @@ namespace GUI
 			
 			this.width = width;
 			this.height = height;
-			corners = new Vector2[]{pos, 
-				new Vector2(pos.X + width, pos.Y),
-				new Vector2(pos.X + width, pos.Y + height),
-				new Vector2(pos.X, pos.Y + height)};
+			corners = new Vector2[]{
+                new Vector2(),
+				new Vector2(width, 0),
+				new Vector2(width, height),
+				new Vector2(0, height)};
 			
 			renderState = ButtonState.INACTIVE;
 		}
@@ -99,7 +104,9 @@ namespace GUI
 		public bool CheckPoint(Vector2 point, Object sender, bool shouldClick = true)
 		{	
 			bool b;
-			b = Utilities.IsPointContained(corners, point);
+            Point p = CoreEngine.display.PointToClient(new Point((int)point.X, (int)point.Y));
+            Vector2 pp = new Vector2(p.X, p.Y);
+            b = Utilities.IsPointContained(corners, pp);
 			if (b && shouldClick)
 				OnClick.Invoke(sender);
 			else if (b)
@@ -122,15 +129,16 @@ namespace GUI
 
             Console.WriteLine("Button ID: " +active);
 
-			base.init ();
+			
 
 			List<Vector2> verts = new List<Vector2>();
             foreach (Vector2 v in corners)
                 verts.Add(v);
             
 
-			renderer = new RenderMask (this, "ui", inactive);
+			renderer = new RenderMask (this, "ui", active);
 			renderer.SetVerts (verts);
+            renderer.Translate(position.X+CoreEngine.display.Width, position.Y+CoreEngine.display.Height);
 			renderer.init ();
 			AddComponent(renderer);
 		}

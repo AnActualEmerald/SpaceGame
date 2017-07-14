@@ -164,7 +164,6 @@ namespace Core.Graphics
 				Console.Error.Flush ();
 				throw new NullReferenceException ("Render engine for engine under \"" + engine_s + "\" was null");
 			}
-            Console.WriteLine("rendering");
 			engine.MakeRequest(new RenderRequest(ref _instance));
 			
 		}

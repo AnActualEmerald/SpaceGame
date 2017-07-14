@@ -59,3 +59,4 @@ C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\OpenTK.p
 C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\OpenTK.xml
 C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\SpaceGameSever.pdb
 C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\obj\Debug\ShipBuild.csprojResolveAssemblyReference.cache
+C:\Users\kevin\Documents\GitHub\SpaceGame\SpaceGame\SpaceGame\bin\Debug\OpenTK.dll
